@@ -1,5 +1,6 @@
 import type { AppProps } from 'next/app'
 import Script from 'next/script'
+import { useRouter } from 'next/router'
 
 import CssBaseline from '@mui/material/CssBaseline'
 import { StyledEngineProvider, ThemeProvider } from '@mui/material/styles'
@@ -21,6 +22,9 @@ import '../types/extensions'
  * https://nextjs.org/docs/pages/building-your-application/routing/custom-app
  */
 export default function MyApp({ Component, pageProps }: AppProps) {
+  const router = useRouter()
+  const showSharedFooter = router.pathname !== '/'
+
   return (
     <APIProvider>
       <StyledEngineProvider injectFirst>
@@ -48,7 +52,7 @@ export default function MyApp({ Component, pageProps }: AppProps) {
               <FeatureToggleProvider>
                 <AuthProvider>
                   <Component {...pageProps} />
-                  <Footer />
+                  {showSharedFooter && <Footer />}
                   <Toast />
                 </AuthProvider>
               </FeatureToggleProvider>

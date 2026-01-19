@@ -10,7 +10,7 @@ import { Environment, OrbitControls, PerformanceMonitor, Preload, useGLTF } from
 import { Canvas, extend, useFrame } from '@react-three/fiber'
 import { Bloom, EffectComposer, Noise, ToneMapping } from '@react-three/postprocessing'
 import { suspend } from 'suspend-react'
-import { Mesh, MeshStandardMaterial, RepeatWrapping,TextureLoader } from 'three'
+import { Mesh, MeshStandardMaterial, RepeatWrapping, TextureLoader } from 'three'
 import { GLTF, GLTFLoader } from 'three-stdlib'
 
 extend({ OrbitControls })
@@ -30,7 +30,7 @@ useGLTF.preload('./sun.glb')
 const Model = (props: ModelProps) => {
   const { onAfterRender, onError } = props;
   const [model, setModel] = useState<GLTF | null>(null);
-  
+
   // Create sun material with emissive properties
   const sunMaterial = new MeshStandardMaterial({
     color: 0xffdd00,
@@ -209,7 +209,7 @@ const MNModel = (props: Props) => {
             enablePan={false}
             enableZoom={false}
           />
-          <EffectComposer disableNormalPass multisampling={4}>
+          <EffectComposer enableNormalPass={false} multisampling={4}>
             <Bloom mipmapBlur luminanceThreshold={1} />
             <Noise opacity={0.05} />
             <ToneMapping
