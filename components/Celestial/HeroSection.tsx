@@ -53,10 +53,6 @@ const HeroSection = () => {
             style={{ animationDelay: '0.8s' }}
           >
             <div className="flex items-center gap-2 text-muted-foreground">
-              <Calendar className="w-5 h-5 text-primary" />
-              <span>February 14-16, 2026</span>
-            </div>
-            <div className="flex items-center gap-2 text-muted-foreground">
               <MapPin className="w-5 h-5 text-primary" />
               <span>University of Toronto</span>
             </div>
