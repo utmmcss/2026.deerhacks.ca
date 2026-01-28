@@ -78,7 +78,90 @@ export type Application = {
   mlh_authorize: boolean
   mlh_code_agreement: boolean
   mlh_subscribe: boolean
+
+  // Archetype Quiz
+  archetype_answers: ArchetypeAnswer[]
+  archetype_scores: Record<Planet, number>
+  archetype: Planet | ''
 }
+
+// Archetype Types
+export type ArchetypeAnswer = 'A' | 'B' | 'C' | 'D' | 'E' | ''
+
+export const archetypeAnswerOptions = ['A', 'B', 'C', 'D', 'E'] as const
+
+export const planetOptions = [
+  'Venus',
+  'Neptune',
+  'Earth',
+  'Saturn',
+  'Jupiter',
+  'Uranus',
+  'Sun',
+  'Mercury',
+  'Mars',
+  'Moon',
+] as const
+
+export type Planet = (typeof planetOptions)[number]
+
+export const archetypeQuestions = [
+  {
+    id: 1,
+    question: "It's the first hour of the hackathon. Where are you?",
+    options: {
+      A: 'Sketching out the UI/UX and picking the perfect color palette.',
+      B: 'Setting up the repo, the database schema, and the dev environment.',
+      C: 'Mapping out the entire system architecture and how it scales to millions.',
+      D: "Researching that one obscure, experimental API you've been dying to try.",
+      E: 'Gathering the team to set goals and making sure everyone is hyped.',
+    },
+  },
+  {
+    id: 2,
+    question: 'A critical bug appears at 3:00 AM. What is your move?',
+    options: {
+      A: "Stay calm, open the debugger, and systematically trace the stack until it's fixed.",
+      B: 'Find a quick, "dirty" workaround so you can keep moving fast.',
+      C: 'Check in on your teammates to see if they need coffee or a moral boost.',
+      D: "Realize the bug is a sign that the original concept was too boring—let's pivot!",
+      E: 'Document the bug and explain the technical debt to the "judges" in the final pitch.',
+    },
+  },
+  {
+    id: 3,
+    question: 'What does your "Dream Project" look like?',
+    options: {
+      A: 'A rock-solid tool that solves a real-world, everyday problem perfectly.',
+      B: 'A visually stunning masterpiece that feels like high art.',
+      C: 'A moonshot idea that sounds impossible but could change the world.',
+      D: 'Something "weird" and technically challenging that nobody else would think of.',
+      E: "Whatever my team needs most to succeed; I'm happy to fill the gaps.",
+    },
+  },
+  {
+    id: 4,
+    question: 'In a team setting, which role do you naturally gravitate toward?',
+    options: {
+      A: 'The person who handles the "talking"—the pitch, the demo, and the networking.',
+      B: 'The person who keeps the momentum high and the team focused on the win.',
+      C: 'The person who ensures the project actually functions and meets the requirements.',
+      D: 'The person who thinks of the "What Ifs" and creative "Wow" factors.',
+      E: 'The leader who ensures the vision stays consistent and everyone is aligned.',
+    },
+  },
+  {
+    id: 5,
+    question: 'Which of these "Hackathon Superpowers" would you choose?',
+    options: {
+      A: 'Efficiency: The ability to code faster than anyone else.',
+      B: 'Clarity: The ability to explain complex ideas to anyone.',
+      C: 'Resilience: The ability to hunt down every last bug without tiring.',
+      D: 'Innovation: The ability to see solutions that literally no one else sees.',
+      E: 'Cohesion: The ability to turn a group of strangers into a winning team.',
+    },
+  },
+] as const
 
 export const OTHER_SPECIFY = 'Other (Specify)'
 

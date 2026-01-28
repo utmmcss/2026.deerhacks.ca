@@ -2,6 +2,7 @@ import { FieldValues, UseFormReturn } from 'react-hook-form'
 
 import {
   AboutYouZodForm,
+  ArchetypeZodForm,
   DeerhacksZodForm,
   ExperienceZodForm,
   OpenEndedResponsesZodForm,
@@ -12,6 +13,7 @@ export const formKeys = [
   'Experience',
   'OpenEndedResponses',
   'DeerHacks',
+  'Archetype',
   'Review',
 ] as const
 
@@ -26,5 +28,6 @@ export type FormSections = {
   Experience: Section<ExperienceZodForm>
   OpenEndedResponses: Section<OpenEndedResponsesZodForm>
   DeerHacks: Section<DeerhacksZodForm>
+  Archetype: Section<ArchetypeZodForm>
   Review: Omit<Section<any>, 'form'>
 }

@@ -1,4 +1,5 @@
 import {
+  archetypeAnswerOptions,
   deerhacksExperienceOptions,
   deerhacksReachOptions,
   dietaryRestrictionsOptions,
@@ -282,3 +283,12 @@ export const deerhacksZodForm = intersection(
   })
 )
 export type DeerhacksZodForm = inferZod<typeof deerhacksZodForm>
+
+export const archetypeZodForm = object({
+  archetype_q1: enumZod(archetypeAnswerOptions, { required_error: 'Required' }),
+  archetype_q2: enumZod(archetypeAnswerOptions, { required_error: 'Required' }),
+  archetype_q3: enumZod(archetypeAnswerOptions, { required_error: 'Required' }),
+  archetype_q4: enumZod(archetypeAnswerOptions, { required_error: 'Required' }),
+  archetype_q5: enumZod(archetypeAnswerOptions, { required_error: 'Required' }),
+})
+export type ArchetypeZodForm = inferZod<typeof archetypeZodForm>

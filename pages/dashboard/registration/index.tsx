@@ -13,6 +13,7 @@ import useMediaQuery from '@mui/material/useMediaQuery'
 
 import Modal from '@/components/Dashboard/Modal'
 import AboutYou from '@/components/Dashboard/RegistrationForms/AboutYou'
+import ArchetypeForm from '@/components/Dashboard/RegistrationForms/Archetype'
 import DeerhacksForm from '@/components/Dashboard/RegistrationForms/Deerhacks'
 import ExperienceForm from '@/components/Dashboard/RegistrationForms/Experience'
 import { appToFormMap, formToAppMap } from '@/components/Dashboard/RegistrationForms/helpers'
@@ -39,6 +40,8 @@ import { User } from '@/types/User'
 import {
   AboutYouZodForm,
   aboutYouZodForm,
+  ArchetypeZodForm,
+  archetypeZodForm,
   DeerhacksZodForm,
   deerhacksZodForm,
   ExperienceZodForm,
@@ -106,6 +109,15 @@ const Registration = (props: Props) => {
         mode: 'onChange',
         resolver: zodResolver(deerhacksZodForm),
         defaultValues: appToFormMap.DeerHacks(application),
+      }),
+    },
+    Archetype: {
+      heading: 'Archetype Quiz',
+      subHeadings: ['Discover Your Hacker Personality'],
+      form: useForm<ArchetypeZodForm>({
+        mode: 'onChange',
+        resolver: zodResolver(archetypeZodForm),
+        defaultValues: appToFormMap.Archetype(application),
       }),
     },
     Review: { heading: 'Review & Submit', subHeadings: [] },
@@ -178,6 +190,12 @@ const Registration = (props: Props) => {
           application
         )
         break
+      case 'Archetype':
+        updatedApp = formToAppMap[currentStep](
+          formSections[currentStep].form.getValues(),
+          application
+        )
+        break
     }
     setApplication(updatedApp)
     return updatedApp
@@ -212,7 +230,8 @@ const Registration = (props: Props) => {
     Object.keys(formSections.AboutYou.form.formState.dirtyFields).length ||
     Object.keys(formSections.Experience.form.formState.dirtyFields).length ||
     Object.keys(formSections.OpenEndedResponses.form.formState.dirtyFields).length ||
-    Object.keys(formSections.DeerHacks.form.formState.dirtyFields).length
+    Object.keys(formSections.DeerHacks.form.formState.dirtyFields).length ||
+    Object.keys(formSections.Archetype.form.formState.dirtyFields).length
 
   useEffect(() => {
     const handleWindowClose = (e: any) => {
@@ -318,6 +337,15 @@ const Registration = (props: Props) => {
                         onNext={(data: DeerhacksZodForm) => {
                           handleNextStep(formToAppMap.DeerHacks(data, application))
                         }}
+                      />
+                    )}
+                    {section === 'Archetype' && (
+                      <ArchetypeForm
+                        form={formSections[section].form}
+                        onNext={(data: ArchetypeZodForm) => {
+                          handleNextStep(formToAppMap.Archetype(data, application))
+                        }}
+                        savedArchetype={application.archetype}
                       />
                     )}
                     {section === 'Review' && (

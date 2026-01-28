@@ -18,19 +18,29 @@ import Typography from '@mui/material/Typography'
 import ModalAccount from '@/components/Dashboard/ModalAccount'
 import ModalQRCode from '@/components/Dashboard/ModalQRCode'
 import ModalTips from '@/components/Dashboard/ModalTips'
+import ArchetypeBadge from '@/components/Dashboard/TileUser/ArchetypeBadge'
+import { archetypeThemes, defaultTheme } from '@/constants/archetypeThemes'
 import { useToast } from '@/contexts/Toast'
 import { useUserLogout } from '@/hooks/User/useUserLogout'
+import { Planet } from '@/types/Application'
 import { User, UserStatusDescription } from '@/types/User'
 
 type Props = {
   user: User
+  archetype?: Planet
 }
 
 const TileUser = (props: Props) => {
-  const { user } = props
+  const { user, archetype } = props
 
   const { setToast } = useToast()
   const { isLoading, mutate: userLogout } = useUserLogout()
+
+  // Get theme based on archetype or use default
+  const theme = archetype ? archetypeThemes[archetype] : null
+  const cardGradient = theme?.colors.gradient ?? defaultTheme.gradient
+  const glowGradient = theme?.colors.glowGradient ?? defaultTheme.glowGradient
+  const avatarShadow = theme?.colors.avatarShadow ?? defaultTheme.avatarShadow
 
   const [openAccountDetails, setOpenAccountDetails] = useState(!user.first_name || !user.last_name)
   const [openTips, setOpenTips] = useState(false)
@@ -53,8 +63,7 @@ const TileUser = (props: Props) => {
           p: '2rem',
           borderRadius: '2rem',
           position: 'relative',
-          backgroundImage:
-            'radial-gradient(circle closest-corner at 25% 60%, rgba(238, 39, 39, 0.25), rgba(255, 255, 255, 0)), radial-gradient(circle farthest-side at 71% 16%, rgba(154, 39, 238, 0.15), rgba(255, 255, 255, 0) 35%), radial-gradient(circle closest-corner at 32% 38%, rgba(238, 164, 39, 0.1), rgba(255, 255, 255, 0) 76%), radial-gradient(circle farthest-side at 69% 81%, rgba(255, 0, 48, 0.1), rgba(255, 255, 255, 0) 76%), linear-gradient(#292b2f, #121212)',
+          backgroundImage: cardGradient,
           '&::after': {
             position: 'absolute',
             content: '""',
@@ -63,8 +72,7 @@ const TileUser = (props: Props) => {
             width: '100%',
             height: '100%',
             filter: 'blur(24px)',
-            background:
-              'linear-gradient(135deg,#d6551b,#db3a3a,#c844b0,#ae34d0,#8f55f5,#ae34d0,#c844b0,#db3a3a,#d6551b)',
+            background: glowGradient,
             backgroundSize: '200% 200%',
             borderRadius: 'inherit',
           },
@@ -87,8 +95,7 @@ const TileUser = (props: Props) => {
                     style={{
                       borderRadius: '50%',
                       background: '#ffffff03',
-                      filter:
-                        'drop-shadow(1px 2px 5px #d36bc6) drop-shadow(2px 1px 1px #eaaf0f) drop-shadow(-1px -2px 1px #d6551b) drop-shadow(-2px -2px 1px #c844b0)',
+                      filter: avatarShadow,
                     }}
                     draggable={false}
                     priority
@@ -143,6 +150,16 @@ const TileUser = (props: Props) => {
                   <VerifiedIcon color="primary" fontSize="small" />
                 </Tooltip>
               </Typography>
+              {archetype && (
+                <Box
+                  component="div"
+                  sx={{ mt: 0.5 }}
+                  display="flex"
+                  justifyContent={{ xs: 'center', md: 'start' }}
+                >
+                  <ArchetypeBadge archetype={archetype} />
+                </Box>
+              )}
             </Box>
             <Box
               component="div"

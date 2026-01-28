@@ -11,7 +11,8 @@ import Link from '@mui/material/Link'
 import Tooltip from '@mui/material/Tooltip'
 import Typography from '@mui/material/Typography'
 
-import { Application, OTHER_SPECIFY } from '@/types/Application'
+import ArchetypeResult from '@/components/Dashboard/RegistrationForms/Archetype/ArchetypeResult'
+import { Application, OTHER_SPECIFY, Planet } from '@/types/Application'
 import { User } from '@/types/User'
 
 type Props = {
@@ -207,6 +208,13 @@ const FormReview = (props: Props) => {
         <br />
         <FieldReview name="Meals" value={getMeals(application)} isList />
       </Grid>
+
+      {application.archetype && (
+        <Grid container direction="column" gap="1.25rem">
+          <Typography variant="h2">Your Hacker Archetype</Typography>
+          <ArchetypeResult archetype={application.archetype as Planet} />
+        </Grid>
+      )}
 
       {onSubmit && <Button onClick={onSubmit}>Submit Application</Button>}
     </Grid>

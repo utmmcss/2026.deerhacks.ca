@@ -18,10 +18,12 @@ import {
 } from '@/types/Application'
 import {
   AboutYouZodForm,
+  ArchetypeZodForm,
   DeerhacksZodForm,
   ExperienceZodForm,
   OpenEndedResponsesZodForm,
 } from '@/types/Zod'
+import { calculateArchetype } from '@/utils/archetypeCalculator'
 
 export const toDropdownType = <T extends any>(
   options: readonly T[],
@@ -176,11 +178,23 @@ const appToDeerHacksForm = (application: Application) => {
   }
 }
 
+const appToArchetypeForm = (application: Application) => {
+  const answers = application.archetype_answers || []
+  return {
+    archetype_q1: answers[0] || undefined,
+    archetype_q2: answers[1] || undefined,
+    archetype_q3: answers[2] || undefined,
+    archetype_q4: answers[3] || undefined,
+    archetype_q5: answers[4] || undefined,
+  }
+}
+
 export const appToFormMap = {
   AboutYou: appToAboutForm,
   Experience: appToExpForm,
   OpenEndedResponses: appToOpenResponseForm,
   DeerHacks: appToDeerHacksForm,
+  Archetype: appToArchetypeForm,
 }
 
 const aboutFormToApp = (form: AboutYouZodForm, currApplication: Application) => {
@@ -304,9 +318,28 @@ const deerhacksFormToApp = (form: DeerhacksZodForm, currApplication: Application
   }
 }
 
+const archetypeFormToApp = (form: ArchetypeZodForm, currApplication: Application): Application => {
+  const answers = [
+    form.archetype_q1,
+    form.archetype_q2,
+    form.archetype_q3,
+    form.archetype_q4,
+    form.archetype_q5,
+  ]
+  const { scores, archetype } = calculateArchetype(answers)
+
+  return {
+    ...currApplication,
+    archetype_answers: answers,
+    archetype_scores: scores,
+    archetype,
+  }
+}
+
 export const formToAppMap = {
   AboutYou: aboutFormToApp,
   Experience: expFormToApp,
   OpenEndedResponses: openResponseFormToApp,
   DeerHacks: deerhacksFormToApp,
+  Archetype: archetypeFormToApp,
 }

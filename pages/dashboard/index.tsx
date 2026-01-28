@@ -23,12 +23,23 @@ import FullPageSpinner from '@/components/Shared/FullPageSpinner'
 import Navbar from '@/components/Shared/Navbar'
 import { useAuth } from '@/contexts/Auth'
 import { useFeatureToggle } from '@/contexts/FeatureToggle'
+import { useApplicationGet } from '@/hooks/Application/userApplicationGet'
 import Error401Page from '@/pages/401'
 import Error404Page from '@/pages/404'
 
 const Dashboard = () => {
   const { toggles } = useFeatureToggle()
   const { user, loading, authenticated } = useAuth()
+
+  // Fetch application data to get archetype (only for completed applications)
+  const shouldFetchArchetype =
+    authenticated && user?.status && !['pending', 'registering'].includes(user.status)
+
+  const { data: applicationData, isLoading: isLoadingApplication } = useApplicationGet({
+    enabled: !!shouldFetchArchetype,
+  })
+
+  const archetype = applicationData?.application?.archetype || undefined
 
   const volunteerForm = process.env.NEXT_PUBLIC_TOGGLE_VOLUNTEER_FORM
   const showVolunteerForm = !!volunteerForm && toggles.signupVolunteer
@@ -56,7 +67,7 @@ const Dashboard = () => {
           >
             <Navbar />
             <Box component="div" display="flex" flexDirection="column" gap="1rem" width="100%">
-              <TileUser user={user} />
+              <TileUser user={user} archetype={archetype} />
               {alertMessage && showAlert && (
                 <Alert
                   severity="info"
