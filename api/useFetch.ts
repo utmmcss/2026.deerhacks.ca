@@ -1,6 +1,6 @@
 import { useCallback } from 'react'
 
-const methodKeys = ['GET', 'POST'] as const
+const methodKeys = ['GET', 'POST', 'PUT', 'DELETE'] as const
 type Method = (typeof methodKeys)[number]
 
 const baseURLKeys = ['DH_BE', 'DH_CMS', 'CUSTOM'] as const
@@ -37,7 +37,10 @@ const fetchHelper = async (props: Props): Promise<{ data: any; error: any; statu
       mode: 'cors' as RequestMode,
     }),
     method,
-    ...(method !== 'GET' && { body: isForm ? body : JSON.stringify({ ...body, ts: Date.now() }) }),
+    ...(method !== 'GET' &&
+      body !== undefined && {
+        body: isForm ? body : JSON.stringify({ ...body, ts: Date.now() }),
+      }),
     headers: {
       ...(!isForm && { 'Content-Type': 'application/json' }),
       ...(base === 'DH_CMS' && {

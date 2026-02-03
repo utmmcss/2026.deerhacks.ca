@@ -1,6 +1,16 @@
 import { APITemplate } from '@/api/types'
 import { CustomFetch } from '@/api/useFetch'
 import {
+  AdminEventDeleteResp,
+  AdminEventListResp,
+  AdminEventResp,
+  EventCreateReq,
+  EventUpdateReq,
+  SettingUpdateReq,
+  SettingUpdateResp,
+  SettingsResp,
+} from '@/types/Admin'
+import {
   ApplicationGetResp,
   ApplicationUpdateReq,
   ResumeGetResp,
@@ -22,6 +32,8 @@ import {
 export const config = (customFetch: CustomFetch) =>
   ({
     ...application(customFetch),
+    ...publicSettings(customFetch),
+    ...admin(customFetch),
     ...email(customFetch),
     ...events(customFetch),
     ...photos(customFetch),
@@ -49,6 +61,42 @@ const application = (customFetch: CustomFetch) =>
         isForm: true,
       })
       return res.data as ResumeUpdateResp
+    },
+  } as const)
+
+const publicSettings = (customFetch: CustomFetch) =>
+  ({
+    settingsGet: async () => {
+      const res = await customFetch('GET', 'DH_BE', '/settings')
+      return res.data as SettingsResp
+    },
+  } as const)
+
+const admin = (customFetch: CustomFetch) =>
+  ({
+    adminEventList: async () => {
+      const res = await customFetch('GET', 'DH_BE', '/admin/events')
+      return res.data as AdminEventListResp
+    },
+    adminEventCreate: async (args: EventCreateReq) => {
+      const res = await customFetch('POST', 'DH_BE', '/admin/events', args)
+      return res.data as AdminEventResp
+    },
+    adminEventUpdate: async (args: { id: number; data: EventUpdateReq }) => {
+      const res = await customFetch('PUT', 'DH_BE', `/admin/events/${args.id}`, args.data)
+      return res.data as AdminEventResp
+    },
+    adminEventDelete: async (args: { id: number }) => {
+      const res = await customFetch('DELETE', 'DH_BE', `/admin/events/${args.id}`)
+      return res.data as AdminEventDeleteResp
+    },
+    adminSettingsGet: async () => {
+      const res = await customFetch('GET', 'DH_BE', '/admin/settings')
+      return res.data as SettingsResp
+    },
+    adminSettingsUpdate: async (args: { key: string; data: SettingUpdateReq }) => {
+      const res = await customFetch('PUT', 'DH_BE', `/admin/settings/${args.key}`, args.data)
+      return res.data as SettingUpdateResp
     },
   } as const)
 

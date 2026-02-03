@@ -22,7 +22,7 @@ const ScheduleGrid = (props: ScheduleProps) => {
   const [selectedEvent, setSelectedEvent] = useState<Event | undefined>()
 
   // number of extra hours to show before/after first/last event
-  const numExtraHours = 1
+  const numExtraHours = 0
 
   /**
    * offset from taking away rows of hours if events start later in the day,
