@@ -1,11 +1,10 @@
 import NextLink from 'next/link'
 
-import { Github, Instagram, Linkedin, Twitter } from 'lucide-react'
+import { Github, Instagram, Linkedin } from 'lucide-react'
 
 const socialLinks = [
-  { icon: Twitter, href: 'https://twitter.com/deerhacks', label: 'Twitter' },
   { icon: Instagram, href: 'https://instagram.com/deerhacks', label: 'Instagram' },
-  { icon: Github, href: 'https://github.com/deerhacks', label: 'GitHub' },
+  { icon: Github, href: 'https://github.com/utmmcss', label: 'GitHub' },
   { icon: Linkedin, href: 'https://linkedin.com/company/deerhacks', label: 'LinkedIn' },
 ]
 
