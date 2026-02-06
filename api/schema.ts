@@ -28,6 +28,17 @@ import {
   UserUpdateBatchReq,
   UserUpdateReq,
 } from '@/types/User'
+import type {
+  TeamCreateReq,
+  TeamUpdateReq,
+  TeamJoinRequestReq,
+  TeamJoinRespondReq,
+  TeamTransferReq,
+  TeamResp,
+  TeamsListResp,
+  AvailableUsersResp,
+  TeamMessageResp,
+} from '@/types/Team'
 
 export const config = (customFetch: CustomFetch) =>
   ({
@@ -38,6 +49,7 @@ export const config = (customFetch: CustomFetch) =>
     ...events(customFetch),
     ...photos(customFetch),
     ...qrCodes(customFetch),
+    ...teams(customFetch),
     ...users(customFetch),
     ..._(),
   } as const satisfies APITemplate)
@@ -145,6 +157,91 @@ const qrCodes = (customFetch: CustomFetch) =>
     qrUserInfo: async (args: QRUserGetParams) => {
       const res = await customFetch('GET', 'DH_BE', `/admin-user-get?qrId=${args.qrId}`)
       return res.data as UserGetResp
+    },
+  } as const)
+
+const teams = (customFetch: CustomFetch) =>
+  ({
+    // Get current user's team
+    teamMineGet: async () => {
+      const res = await customFetch('GET', 'DH_BE', '/teams/me')
+      return res.data as TeamResp
+    },
+
+    // List all teams
+    teamsList: async (args?: { sort?: string; open_spots?: boolean }) => {
+      const params = new URLSearchParams()
+      if (args?.sort) params.set('sort', args.sort)
+      if (args?.open_spots) params.set('open_spots', 'true')
+      const query = params.toString() ? `?${params.toString()}` : ''
+      const res = await customFetch('GET', 'DH_BE', `/teams${query}`)
+      return res.data as TeamsListResp
+    },
+
+    // Get team by ID
+    teamByIdGet: async (args: { id: number }) => {
+      const res = await customFetch('GET', 'DH_BE', `/teams/${args.id}`)
+      return res.data as TeamResp
+    },
+
+    // List available users (not on a team)
+    teamsAvailableUsersList: async () => {
+      const res = await customFetch('GET', 'DH_BE', '/teams/available-users')
+      return res.data as AvailableUsersResp
+    },
+
+    // Create team
+    teamsCreate: async (args: { data: TeamCreateReq }) => {
+      const res = await customFetch('POST', 'DH_BE', '/teams', args.data)
+      return res.data as TeamResp
+    },
+
+    // Update team
+    teamsUpdate: async (args: { data: TeamUpdateReq }) => {
+      const res = await customFetch('PUT', 'DH_BE', '/teams', args.data)
+      return res.data as TeamResp
+    },
+
+    // Request to join a team
+    teamsRequestJoin: async (args: { data: TeamJoinRequestReq }) => {
+      const res = await customFetch('POST', 'DH_BE', '/teams/requests', args.data)
+      return res.data as TeamMessageResp
+    },
+
+    // Respond to a join request (owner only)
+    teamsRespondJoin: async (args: { data: TeamJoinRespondReq }) => {
+      const res = await customFetch('POST', 'DH_BE', '/teams/requests/respond', args.data)
+      return res.data as TeamResp
+    },
+
+    // Remove member from team
+    teamsRemoveMember: async (args: { userId: number }) => {
+      const res = await customFetch('DELETE', 'DH_BE', `/teams/members/${args.userId}`)
+      return res.data as TeamResp
+    },
+
+    // Leave team
+    teamsLeave: async () => {
+      const res = await customFetch('POST', 'DH_BE', '/teams/leave')
+      return res.data as TeamMessageResp
+    },
+
+    // Heartbeat
+    teamsHeartbeat: async () => {
+      const res = await customFetch('POST', 'DH_BE', '/teams/heartbeat')
+      return res.data as TeamMessageResp
+    },
+
+    // Transfer ownership
+    teamsTransfer: async (args: { data: TeamTransferReq }) => {
+      const res = await customFetch('POST', 'DH_BE', '/teams/transfer', args.data)
+      return res.data as TeamResp
+    },
+
+    // Disband team
+    teamsDisband: async () => {
+      const res = await customFetch('DELETE', 'DH_BE', '/teams')
+      return res.data as TeamMessageResp
     },
   } as const)
 

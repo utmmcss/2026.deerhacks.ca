@@ -16,6 +16,7 @@ import TileRegistration from '@/components/Dashboard/TileRegistration'
 import TileScanner from '@/components/Dashboard/TileScanner'
 import TileSchedule from '@/components/Dashboard/TileSchedule'
 import TileStatus from '@/components/Dashboard/TileStatus'
+import TileTeams from '@/components/Dashboard/TileTeams'
 import TileUser from '@/components/Dashboard/TileUser'
 import TileUsersTable from '@/components/Dashboard/TileUsersTable'
 import TileVolunteerForm from '@/components/Dashboard/TileVolunteerForm'
@@ -164,6 +165,13 @@ const Dashboard = () => {
                     <TileSchedule status={user.status} />
                   </Grid>
                 </Grid>
+                {['accepted', 'attended', 'admin', 'moderator'].includes(user.status) && (
+                  <Grid container spacing={2}>
+                    <Grid item xs={12}>
+                      <TileTeams status={user.status} />
+                    </Grid>
+                  </Grid>
+                )}
                 <Grid container spacing={2}>
                   <Grid container item xs={12} md={5} lg={4} spacing={2} order={{ xs: 2, md: 1 }}>
                     <Grid item xs={6}>
