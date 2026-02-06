@@ -60,7 +60,7 @@ export type Application = {
   project_pitch: string
 
   // Dietary & Meals
-  diet_restriction: (typeof dietaryRestrictionsOptions)[number][]
+  diet_restriction: ((typeof dietaryRestrictionsOptions)[number] | string)[]
   day1_dinner: boolean
   day2_breakfast: boolean
   day2_lunch: boolean
@@ -335,10 +335,12 @@ export const interestsOptions = [
 // Simplified deerhacks reach options
 export const deerhacksReachOptions = ['University', 'Social Media', 'Other'] as const
 
-// Simplified dietary restrictions - no "None" or "Other"
+// Dietary restrictions with "Other" option for custom input
 export const dietaryRestrictionsOptions = [
   'Halal',
   'Vegetarian',
   'Vegan',
   'Gluten-Free',
+  'Dairy-Free',
+  OTHER_SPECIFY,
 ] as const

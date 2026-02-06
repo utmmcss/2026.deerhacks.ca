@@ -81,14 +81,17 @@ const appToOpenResponseForm = (application: Application) => {
 }
 
 const appToDeerHacksForm = (application: Application) => {
-  const { options: diet_restriction } = toMultiSelectType(
+  const { options: diet_restriction, other: diet_restriction_other } = toMultiSelectType(
     dietaryRestrictionsOptions,
     application.diet_restriction
   )
 
   return {
     deerhacks_reach: application.deerhacks_reach as (typeof deerhacksReachOptions)[number] | undefined,
-    diet_restriction,
+    diet_restriction: (diet_restriction_other
+      ? [...diet_restriction, OTHER_SPECIFY]
+      : diet_restriction) as (typeof dietaryRestrictionsOptions)[number][],
+    ...(diet_restriction_other && { diet_restriction_other }),
     day1_dinner: application.day1_dinner,
     day2_breakfast: application.day2_breakfast,
     day2_lunch: application.day2_lunch,
@@ -151,10 +154,15 @@ const openResponseFormToApp = (
 }
 
 const deerhacksFormToApp = (form: DeerhacksZodForm, currApplication: Application): Application => {
+  // Replace OTHER_SPECIFY with the actual custom text
+  const diet_restriction = form.diet_restriction.map((item) =>
+    item === OTHER_SPECIFY && form.diet_restriction_other ? form.diet_restriction_other : item
+  )
+
   return {
     ...currApplication,
     deerhacks_reach: form.deerhacks_reach,
-    diet_restriction: form.diet_restriction,
+    diet_restriction,
     day1_dinner: form.day1_dinner,
     day2_breakfast: form.day2_breakfast,
     day2_lunch: form.day2_lunch,

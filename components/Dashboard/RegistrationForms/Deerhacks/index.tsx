@@ -11,7 +11,8 @@ import Typography from '@mui/material/Typography'
 import FormCheckbox from '@/components/Dashboard/RegistrationForms/FormComponents/FormCheckbox'
 import FormMultiSelect from '@/components/Dashboard/RegistrationForms/FormComponents/FormMultiSelect'
 import FormSelect from '@/components/Dashboard/RegistrationForms/FormComponents/FormSelect'
-import { deerhacksReachOptions, dietaryRestrictionsOptions } from '@/types/Application'
+import FormTextField from '@/components/Dashboard/RegistrationForms/FormComponents/FormTextField'
+import { deerhacksReachOptions, dietaryRestrictionsOptions, OTHER_SPECIFY } from '@/types/Application'
 import { DeerhacksZodForm } from '@/types/Zod'
 
 type Props = {
@@ -25,6 +26,7 @@ const DeerhacksForm = (props: Props) => {
   const {
     control,
     handleSubmit,
+    watch,
     formState: { errors, isSubmitting },
   } = form
 
@@ -53,19 +55,35 @@ const DeerhacksForm = (props: Props) => {
           <Typography variant="h3" color="text.secondary" gutterBottom>
             Select all that apply (leave empty if none)
           </Typography>
-          <Controller
-            name="diet_restriction"
-            control={control}
-            render={({ field: { ref, ...field } }) => (
-              <FormMultiSelect
-                label="Dietary Restrictions"
-                options={dietaryRestrictionsOptions}
-                errors={errors}
-                inputRef={ref}
-                {...field}
+          <Box component="div" display="flex" flexDirection="column" gap="1rem">
+            <Controller
+              name="diet_restriction"
+              control={control}
+              render={({ field: { ref, ...field } }) => (
+                <FormMultiSelect
+                  label="Dietary Restrictions"
+                  options={dietaryRestrictionsOptions}
+                  errors={errors}
+                  inputRef={ref}
+                  {...field}
+                />
+              )}
+            />
+            {watch('diet_restriction')?.includes(OTHER_SPECIFY) && (
+              <Controller
+                name="diet_restriction_other"
+                control={control}
+                render={({ field: { ref, ...field } }) => (
+                  <FormTextField
+                    label="Please specify"
+                    errors={errors}
+                    inputRef={ref}
+                    {...field}
+                  />
+                )}
               />
             )}
-          />
+          </Box>
         </Grid>
 
         <Grid container direction="column" gap="1.5rem">
