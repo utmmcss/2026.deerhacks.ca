@@ -120,18 +120,34 @@ export const openEndedResponsesZodForm = object({
 export type OpenEndedResponsesZodForm = inferZod<typeof openEndedResponsesZodForm>
 
 // DeerHacks form - meals, dietary, fasting, and reach
-export const deerhacksZodForm = object({
-  deerhacks_reach: enumZod(deerhacksReachOptions, { required_error: 'Required' }),
+const dietRestriction = object({
   diet_restriction: enumZod(dietaryRestrictionsOptions, { required_error: 'Required' })
     .array()
     .min(0),
-  day1_dinner: boolean(),
-  day2_breakfast: boolean(),
-  day2_lunch: boolean(),
-  day2_dinner: boolean(),
-  day3_breakfast: boolean(),
-  is_fasting: boolean(),
+  diet_restriction_other: textFieldOptional,
+}).superRefine(({ diet_restriction, diet_restriction_other }, refinementContext) => {
+  if (diet_restriction.includes(OTHER_SPECIFY) && !diet_restriction_other) {
+    refinementContext.addIssue({
+      code: 'custom',
+      message: 'Required',
+      path: ['diet_restriction_other'],
+    })
+  }
+  return refinementContext
 })
+
+export const deerhacksZodForm = intersection(
+  dietRestriction,
+  object({
+    deerhacks_reach: enumZod(deerhacksReachOptions, { required_error: 'Required' }),
+    day1_dinner: boolean(),
+    day2_breakfast: boolean(),
+    day2_lunch: boolean(),
+    day2_dinner: boolean(),
+    day3_breakfast: boolean(),
+    is_fasting: boolean(),
+  })
+)
 export type DeerhacksZodForm = inferZod<typeof deerhacksZodForm>
 
 // Archetype form - single question

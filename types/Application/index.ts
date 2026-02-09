@@ -60,7 +60,7 @@ export type Application = {
   project_pitch: string
 
   // Dietary & Meals
-  diet_restriction: (typeof dietaryRestrictionsOptions)[number][]
+  diet_restriction: ((typeof dietaryRestrictionsOptions)[number] | string)[]
   day1_dinner: boolean
   day2_breakfast: boolean
   day2_lunch: boolean
@@ -128,6 +128,33 @@ export const answerToPlanetMap: Record<string, Planet> = {
 }
 
 export const OTHER_SPECIFY = 'Other (Specify)'
+
+// Open-ended question definitions (single source of truth)
+export const openEndedQuestions = {
+  deerhacks_pitch: {
+    question: 'What do you hope to do at DeerHacks?',
+    label: 'Your answer (150 words max)',
+    maxLength: 1000,
+  },
+  shared_project: {
+    question: 'What would make you a valuable teammate?',
+    helperText: 'Technical skills, collaborative skills, etc. are all welcome',
+    label: 'Your answer (150 words max)',
+    maxLength: 1000,
+  },
+  future_tech: {
+    question: 'What type of project would you like to work on in the near future?',
+    helperText: 'How would you approach making it come to life?',
+    label: 'Your answer (150 words max)',
+    maxLength: 1000,
+  },
+  project_pitch: {
+    question: 'Dream Project Pitch',
+    helperText: 'Given no limits on tech, time, money, scale, etc, pitch a project idea.',
+    label: 'Your pitch (25 words max)',
+    maxLength: 200,
+  },
+} as const
 
 // Simplified gender options - no "Other (Specify)"
 export const genderOptions = ['Male', 'Female', 'Non-Binary', 'Choose not to answer'] as const
@@ -335,10 +362,12 @@ export const interestsOptions = [
 // Simplified deerhacks reach options
 export const deerhacksReachOptions = ['University', 'Social Media', 'Other'] as const
 
-// Simplified dietary restrictions - no "None" or "Other"
+// Dietary restrictions with "Other" option for custom input
 export const dietaryRestrictionsOptions = [
   'Halal',
   'Vegetarian',
   'Vegan',
   'Gluten-Free',
+  'Dairy-Free',
+  OTHER_SPECIFY,
 ] as const
