@@ -6,6 +6,7 @@ import Container from '@mui/material/Container'
 import Fade from '@mui/material/Fade'
 import Grid from '@mui/material/Grid'
 
+import Starfield from '@/components/Celestial/Starfield'
 import TileChecklist from '@/components/Dashboard/TileChecklist'
 import TileDevpost from '@/components/Dashboard/TileDevpost'
 import TileHackerPack from '@/components/Dashboard/TileHackerPack'
@@ -19,7 +20,6 @@ import TileStatus from '@/components/Dashboard/TileStatus'
 import TileUser from '@/components/Dashboard/TileUser'
 import TileUsersTable from '@/components/Dashboard/TileUsersTable'
 import TileVolunteerForm from '@/components/Dashboard/TileVolunteerForm'
-import Starfield from '@/components/Celestial/Starfield'
 import FullPageSpinner from '@/components/Shared/FullPageSpinner'
 import Navbar from '@/components/Shared/Navbar'
 import { useAuth } from '@/contexts/Auth'
@@ -36,7 +36,7 @@ const Dashboard = () => {
   const shouldFetchArchetype =
     authenticated && user?.status && !['pending', 'registering'].includes(user.status)
 
-  const { data: applicationData, isLoading: isLoadingApplication } = useApplicationGet({
+  const { data: applicationData } = useApplicationGet({
     enabled: !!shouldFetchArchetype,
   })
 

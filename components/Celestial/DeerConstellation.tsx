@@ -62,13 +62,12 @@ const DeerConstellation = () => {
   ]
 
   return (
-    <div className="relative w-[320px] h-[220px] sm:w-[380px] sm:h-[260px] md:w-[420px] md:h-[280px] animate-float">
+    <div className="relative w-[320px] h-[220px] sm:w-[380px] sm:h-[260px] md:w-[420px] md:h-[280px] animate-float overflow-visible">
       <svg
         viewBox="0 0 300 200"
-        className={`w-full h-full transition-all duration-1000 ${
+        className={`w-full h-full transition-all duration-1000 overflow-visible ${
           isVisible ? 'opacity-100' : 'opacity-0'
         }`}
-        style={{ filter: 'drop-shadow(0 0 30px rgba(212, 175, 55, 0.3))' }}
       >
         {/* Connection lines with gradient */}
         <defs>

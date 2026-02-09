@@ -1,6 +1,6 @@
 import type { AppProps } from 'next/app'
-import Script from 'next/script'
 import { useRouter } from 'next/router'
+import Script from 'next/script'
 
 import CssBaseline from '@mui/material/CssBaseline'
 import { StyledEngineProvider, ThemeProvider } from '@mui/material/styles'

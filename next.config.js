@@ -12,6 +12,7 @@ const nextConfig = {
   output: 'standalone',
   transpilePackages: ['mui-tel-input'],
   images: {
+    formats: ['image/avif', 'image/webp'],
     remotePatterns: [
       {
         protocol: 'https',

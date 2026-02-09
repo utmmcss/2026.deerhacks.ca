@@ -1,21 +1,20 @@
 import NextLink from 'next/link'
 import { ReactNode } from 'react'
 
-import {
-  Heart,
-  MessageCircle,
-  Users,
-  HandHeart,
-  Globe,
-  Eye,
-  Shield,
-  AlertTriangle,
-  Phone,
-  Mail,
-  ExternalLink,
-} from 'lucide-react'
-
 import CelestialLayout from '@/components/Celestial/CelestialLayout'
+import {
+  AlertTriangle,
+  ExternalLink,
+  Eye,
+  Globe,
+  HandHeart,
+  Heart,
+  Mail,
+  MessageCircle,
+  Phone,
+  Shield,
+  Users,
+} from 'lucide-react'
 
 const SectionCard = ({
   children,

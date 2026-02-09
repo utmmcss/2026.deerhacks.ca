@@ -10,9 +10,9 @@ import Link from '@mui/material/Link'
 import Tooltip from '@mui/material/Tooltip'
 import Typography from '@mui/material/Typography'
 
-import ArchetypeResult from '@/components/Dashboard/RegistrationForms/Archetype/ArchetypeResult'
 import LoadingButton from '@/components/Dashboard/LoadingButton'
-import { Application, OTHER_SPECIFY, openEndedQuestions, Planet } from '@/types/Application'
+import ArchetypeResult from '@/components/Dashboard/RegistrationForms/Archetype/ArchetypeResult'
+import { Application, openEndedQuestions, OTHER_SPECIFY, Planet } from '@/types/Application'
 import { User } from '@/types/User'
 
 type Props = {
