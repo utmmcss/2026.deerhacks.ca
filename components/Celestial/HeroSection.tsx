@@ -22,6 +22,7 @@ const HeroSection = () => {
       {/* Background gradients */}
       <div className="absolute inset-0 z-0" style={{ background: 'var(--gradient-hero)' }} />
 
+<<<<<<< HEAD
       {/* Nebula effects - Three-layer background atmosphere */}
       <div className="absolute inset-0 z-0 overflow-hidden pointer-events-none">
         <div 
@@ -36,6 +37,18 @@ const HeroSection = () => {
           className="absolute bottom-[-10%] left-[20%] w-[900px] h-[900px] rounded-full opacity-[0.15]" 
           style={{ background: 'radial-gradient(circle, hsl(var(--accent)) 0%, transparent 70%)' }} 
         />
+=======
+      {/* Nebula effects - Restored subtle background glows */}
+      <div className="absolute inset-0 z-0 overflow-hidden pointer-events-none">
+        <div 
+          className="absolute top-[-10%] left-[-15%] w-[1000px] h-[1000px] rounded-full opacity-[0.015]" 
+          style={{ background: 'radial-gradient(circle, hsl(var(--nebula-purple)) 0%, transparent 70%)' }} 
+        />
+        <div 
+          className="absolute top-[0%] right-[-20%] w-[1100px] h-[1100px] rounded-full opacity-[0.012]" 
+          style={{ background: 'radial-gradient(circle, hsl(var(--primary)) 0%, transparent 70%)' }} 
+        />
+>>>>>>> 96ce90b2640b104e5216dc1d54ef5ad13526387c
       </div>
 
       <div className="container mx-auto px-4 sm:px-6 relative z-10 flex-grow flex flex-col pt-24 pb-12">
