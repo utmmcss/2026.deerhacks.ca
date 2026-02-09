@@ -1,11 +1,10 @@
 import NextLink from 'next/link'
 
-import { MapPin, Users, Sparkles } from 'lucide-react'
-
 import { useFeatureToggle } from '@/contexts/FeatureToggle'
+import { MapPin, Sparkles, Users } from 'lucide-react'
 
-import DeerConstellation from './DeerConstellation'
 import { getButtonClassName } from './buttonStyles'
+import DeerConstellation from './DeerConstellation'
 
 const HeroSection = () => {
   const { toggles } = useFeatureToggle()
@@ -19,22 +18,27 @@ const HeroSection = () => {
   const secondaryClassName = getButtonClassName('constellation', 'xl')
 
   return (
-    <section className="relative min-h-screen flex items-center justify-center overflow-hidden pt-16 pb-8">
+    <section className="relative min-h-screen flex flex-col overflow-hidden">
       {/* Background gradients */}
       <div className="absolute inset-0 z-0" style={{ background: 'var(--gradient-hero)' }} />
 
-      {/* Nebula effects */}
-      <div className="absolute inset-0 z-0 overflow-hidden">
-        <div className="absolute top-[10%] left-[10%] w-[600px] h-[600px] bg-space-nebula/25 rounded-full blur-[150px] animate-pulse-slow" />
-        <div className="absolute bottom-[20%] right-[5%] w-[500px] h-[500px] bg-primary/15 rounded-full blur-[120px] animate-pulse-slow" style={{ animationDelay: '2s' }} />
-        <div className="absolute top-[60%] left-[50%] w-[300px] h-[300px] bg-accent/10 rounded-full blur-[100px] animate-pulse-slow" style={{ animationDelay: '4s' }} />
+      {/* Nebula effects - Restored subtle background glows */}
+      <div className="absolute inset-0 z-0 overflow-hidden pointer-events-none">
+        <div 
+          className="absolute top-[-10%] left-[-15%] w-[1000px] h-[1000px] rounded-full opacity-[0.015]" 
+          style={{ background: 'radial-gradient(circle, hsl(var(--nebula-purple)) 0%, transparent 70%)' }} 
+        />
+        <div 
+          className="absolute top-[0%] right-[-20%] w-[1100px] h-[1100px] rounded-full opacity-[0.012]" 
+          style={{ background: 'radial-gradient(circle, hsl(var(--primary)) 0%, transparent 70%)' }} 
+        />
       </div>
 
-      <div className="container mx-auto px-4 sm:px-6 relative z-10">
-        <div className="flex flex-col items-center text-center max-w-4xl mx-auto">
+      <div className="container mx-auto px-4 sm:px-6 relative z-10 flex-grow flex flex-col pt-24 pb-12">
+        <div className="flex-grow flex flex-col items-center justify-center text-center max-w-4xl mx-auto">
           {/* Deer Constellation - Made more prominent */}
           <div
-            className="mb-6 sm:mb-10 opacity-0 animate-fade-in relative"
+            className="mb-8 sm:mb-12 opacity-0 animate-fade-in relative"
             style={{ animationDelay: '0.2s' }}
           >
             {/* Glow effect behind constellation */}
@@ -107,18 +111,18 @@ const HeroSection = () => {
             </a>
           </div>
         </div>
-      </div>
 
-      {/* Scroll indicator */}
-      <div
-        className="absolute bottom-8 left-1/2 -translate-x-1/2 opacity-0 animate-fade-in"
-        style={{ animationDelay: '1.5s' }}
-      >
-        <a href="#about" className="block group" aria-label="Scroll to learn more">
-          <div className="w-6 h-10 border-2 border-muted-foreground/40 group-hover:border-primary/60 rounded-full flex justify-center transition-colors">
-            <div className="w-1.5 h-3 bg-primary rounded-full mt-2 animate-bounce" />
-          </div>
-        </a>
+        {/* Scroll indicator - Improved spacing and visibility */}
+        <div
+          className="mt-8 sm:mt-12 flex justify-center opacity-0 animate-fade-in"
+          style={{ animationDelay: '1.5s' }}
+        >
+          <a href="#about" className="block group" aria-label="Scroll to learn more">
+            <div className="w-6 h-10 border-2 border-primary/30 group-hover:border-primary/60 rounded-full flex justify-center transition-all duration-300 bg-primary/5">
+              <div className="w-1.5 h-3 bg-primary rounded-full mt-2 animate-bounce shadow-[0_0_8px_hsl(var(--primary))]" />
+            </div>
+          </a>
+        </div>
       </div>
     </section>
   )

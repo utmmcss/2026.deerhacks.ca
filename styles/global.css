@@ -114,6 +114,21 @@
 
   .celestial-theme .animate-constellation {
     animation: constellation-glow 4s ease-in-out infinite;
+    will-change: opacity;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .celestial-theme .animate-twinkle,
+  .celestial-theme .animate-float,
+  .celestial-theme .animate-pulse-slow,
+  .celestial-theme .animate-drift,
+  .celestial-theme .animate-constellation,
+  .animate-star-layer {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
   }
 }
 
@@ -125,7 +140,7 @@
   }
   50% {
     opacity: 1;
-    transform: scale(1.2);
+    transform: scale(1.1);
   }
 }
 
@@ -170,10 +185,10 @@
 @keyframes constellation-glow {
   0%,
   100% {
-    filter: drop-shadow(0 0 8px hsl(42 100% 55% / 0.4));
+    opacity: 0.4;
   }
   50% {
-    filter: drop-shadow(0 0 20px hsl(42 100% 55% / 0.8));
+    opacity: 1;
   }
 }
 

@@ -1,5 +1,6 @@
 import Image from 'next/image'
-import { Star, Sparkles, Mail } from 'lucide-react'
+
+import { Mail, Sparkles } from 'lucide-react'
 
 import { getButtonClassName } from './buttonStyles'
 

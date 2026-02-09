@@ -1,9 +1,8 @@
 import NextLink from 'next/link'
 import { useEffect, useState } from 'react'
 
-import { Menu, X } from 'lucide-react'
-
 import { useFeatureToggle } from '@/contexts/FeatureToggle'
+import { Menu, X } from 'lucide-react'
 
 import { getButtonClassName } from './buttonStyles'
 
@@ -31,7 +30,7 @@ const Navbar = () => {
   const applyEnabled = toggles.dashboard
   const applyClassName = getButtonClassName(
     'hero',
-    'lg',
+    'default',
     applyEnabled ? '' : 'pointer-events-none opacity-50'
   )
 
@@ -41,10 +40,10 @@ const Navbar = () => {
         isScrolled ? 'bg-background/80 backdrop-blur-xl border-b border-border/50' : 'bg-transparent'
       }`}
     >
-      <div className="container mx-auto px-4 sm:px-6">
+      <div className="container mx-auto px-4 sm:px-8 lg:px-12">
         <div className="flex items-center justify-between h-16 sm:h-20">
-          <a href="#" className="flex items-center gap-2 group no-underline">
-            <span className="text-xl sm:text-2xl font-display font-bold text-gradient">
+          <a href="#" className="flex items-center gap-2 group no-underline shrink-0">
+            <span className="text-xl sm:text-2xl font-display font-bold text-gradient whitespace-nowrap">
               DeerHacks
             </span>
           </a>
@@ -75,36 +74,39 @@ const Navbar = () => {
 
           <button
             onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
-            className="md:hidden p-2 text-foreground"
+            className="md:hidden p-2.5 text-primary hover:bg-primary/20 rounded-xl transition-all border border-primary/30 bg-primary/10 active:scale-90 shadow-lg shadow-primary/10"
             type="button"
             aria-label={isMobileMenuOpen ? 'Close menu' : 'Open menu'}
           >
-            {isMobileMenuOpen ? <X size={24} /> : <Menu size={24} />}
+            {isMobileMenuOpen ? <X size={24} strokeWidth={2.5} /> : <Menu size={24} strokeWidth={2.5} />}
           </button>
         </div>
 
         {isMobileMenuOpen && (
-          <div className="md:hidden absolute top-16 left-0 right-0 bg-background/95 backdrop-blur-xl border-b border-border">
-            <div className="flex flex-col p-4 gap-4">
+          <div className="md:hidden absolute top-16 left-0 right-0 bg-background/80 backdrop-blur-2xl border-b border-border/50 animate-fade-in">
+            <div className="flex flex-col p-6 gap-6">
               {navLinks.map((link) => (
                 <a
                   key={link.label}
                   href={link.href}
                   onClick={() => setIsMobileMenuOpen(false)}
-                  className="text-foreground py-2 font-medium no-underline"
+                  className="text-muted-foreground hover:text-primary py-3 font-medium no-underline transition-all text-lg tracking-wide flex items-center justify-between group px-2 rounded-lg hover:bg-primary/5"
                 >
                   {link.label}
+                  <div className="w-1.5 h-1.5 rounded-full bg-primary opacity-0 group-hover:opacity-100 transition-opacity" />
                 </a>
               ))}
-              {applyEnabled ? (
-                <NextLink href="/login" className={`${applyClassName} mt-2 no-underline`}>
-                  {applyLabel}
-                </NextLink>
-              ) : (
-                <span className={`${applyClassName} mt-2`} aria-disabled="true">
-                  {applyLabel}
-                </span>
-              )}
+              <div className="pt-2">
+                {applyEnabled ? (
+                  <NextLink href="/login" className={`${applyClassName} w-full text-center no-underline`}>
+                    {applyLabel}
+                  </NextLink>
+                ) : (
+                  <span className={`${applyClassName} w-full text-center`} aria-disabled="true">
+                    {applyLabel}
+                  </span>
+                )}
+              </div>
             </div>
           </div>
         )}

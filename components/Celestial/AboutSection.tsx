@@ -1,4 +1,4 @@
-import { Code, Rocket, Users, Zap, Heart } from 'lucide-react'
+import { Code, Heart, Rocket, Users, Zap } from 'lucide-react';
 
 const features = [
   {
@@ -76,7 +76,7 @@ const AboutSection = () => {
             </div>
 
             <div className="relative grid grid-cols-2 md:grid-cols-3 gap-8 sm:gap-12">
-              {stats.map((stat, index) => (
+              {stats.map((stat) => (
                 <div key={stat.label} className="text-center">
                   <div className="text-4xl sm:text-5xl md:text-6xl font-display font-bold text-gradient mb-2">
                     {stat.prefix ?? ''}{stat.value}

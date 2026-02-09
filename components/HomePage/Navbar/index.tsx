@@ -17,7 +17,6 @@ import SwipeableDrawer from '@mui/material/SwipeableDrawer'
 import Tooltip from '@mui/material/Tooltip'
 import useMediaQuery from '@mui/material/useMediaQuery'
 
-import MLHBadge from '@/components/HomePage/MLHBadge'
 import SignUpButton from '@/components/HomePage/SignUpButton'
 import { useFeatureToggle } from '@/contexts/FeatureToggle'
 import theme from '@/styles/theme'

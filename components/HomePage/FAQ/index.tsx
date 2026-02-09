@@ -1,22 +1,17 @@
-import { useState } from 'react'
 
 import AddIcon from '@mui/icons-material/Add'
 import Accordion from '@mui/material/Accordion'
 import AccordionDetails from '@mui/material/AccordionDetails'
 import AccordionSummary from '@mui/material/AccordionSummary'
 import Box from '@mui/material/Box'
-import Collapse from '@mui/material/Collapse'
 import Container from '@mui/material/Container'
-import Link from '@mui/material/Link'
 import Typography from '@mui/material/Typography'
 
 import { useFeatureToggle } from '@/contexts/FeatureToggle'
 
 const FAQ = () => {
-  const [openCount, setOpenCount] = useState(1)
-
   const handleChange = ({ }, isExpanded: boolean) => {
-    setOpenCount((prev) => (isExpanded ? prev + 1 : prev - 1))
+    // Logic removed as it was only updating unused openCount
   }
 
   const { toggles } = useFeatureToggle()
