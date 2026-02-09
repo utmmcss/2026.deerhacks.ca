@@ -21,10 +21,10 @@ import OpenEndedResponsesForm from '@/components/Dashboard/RegistrationForms/Ope
 import RegistrationDrawer from '@/components/Dashboard/RegistrationForms/RegistrationDrawer'
 import RegistrationStepper from '@/components/Dashboard/RegistrationForms/RegistrationStepper'
 import FormReview from '@/components/Dashboard/RegistrationForms/Review'
+import ApplicationsPaused from '@/components/Shared/ApplicationsPaused'
 import BackButton from '@/components/Shared/BackButton'
 import FullPageLoader from '@/components/Shared/FullPageLoader'
 import FullPageSpinner from '@/components/Shared/FullPageSpinner'
-import ApplicationsPaused from '@/components/Shared/ApplicationsPaused'
 import { useAuth } from '@/contexts/Auth'
 import { useFeatureToggle } from '@/contexts/FeatureToggle'
 import { useToast } from '@/contexts/Toast'
@@ -35,7 +35,6 @@ import Error401Page from '@/pages/401'
 import Error404Page from '@/pages/404'
 import Error500Page from '@/pages/500'
 import theme from '@/styles/theme'
-import { getApiErrorMessage } from '@/utils/apiErrors'
 import { Application, ApplicationUpdateReq } from '@/types/Application'
 import { formKeys, FormSections } from '@/types/Registration'
 import { User } from '@/types/User'
@@ -51,6 +50,7 @@ import {
   OpenEndedResponsesZodForm,
   openEndedResponsesZodForm,
 } from '@/types/Zod'
+import { getApiErrorMessage } from '@/utils/apiErrors'
 import { zodResolver } from '@hookform/resolvers/zod'
 
 type Props = {

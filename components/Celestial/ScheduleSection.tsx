@@ -1,7 +1,7 @@
 import NextLink from 'next/link'
 import { useState } from 'react'
 
-import { Clock, ArrowRight, Calendar } from 'lucide-react'
+import { ArrowRight, Calendar, Clock } from 'lucide-react'
 
 import { getButtonClassName } from './buttonStyles'
 
@@ -103,7 +103,7 @@ const ScheduleSection = () => {
             <div className="absolute left-[60px] sm:left-[80px] top-0 bottom-0 w-px bg-gradient-to-b from-primary/50 via-border to-border/30" />
 
             <div className="space-y-4">
-              {currentDay.events.map((event, index) => {
+              {currentDay.events.map((event) => {
                 const isMain = event.type === 'main'
                 return (
                   <div

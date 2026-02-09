@@ -23,8 +23,7 @@ const SchedulePage = () => {
     enabled: !!scheduleVisible,
   })
 
-  const parsedData = data?.parsedData ?? {}
-
+  const parsedData = useMemo(() => data?.parsedData ?? {}, [data?.parsedData])
   const days = useMemo(
     () =>
       Object.keys(parsedData).sort(

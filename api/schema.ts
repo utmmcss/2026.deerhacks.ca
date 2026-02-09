@@ -6,9 +6,9 @@ import {
   AdminEventResp,
   EventCreateReq,
   EventUpdateReq,
+  SettingsResp,
   SettingUpdateReq,
   SettingUpdateResp,
-  SettingsResp,
 } from '@/types/Admin'
 import {
   ApplicationGetResp,

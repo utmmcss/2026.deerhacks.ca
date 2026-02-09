@@ -1,5 +1,5 @@
 import Image from 'next/image'
-import { Suspense, useEffect, useState } from 'react'
+import { Suspense, useEffect, useMemo, useState } from 'react'
 
 import Container from '@mui/material/Container'
 import Link from '@mui/material/Link'
@@ -31,24 +31,24 @@ const Model = (props: ModelProps) => {
   const { onAfterRender, onError } = props;
   const [model, setModel] = useState<GLTF | null>(null);
 
-  // Create sun material with emissive properties
-  const sunMaterial = new MeshStandardMaterial({
-    color: 0xffdd00,
-    emissive: 0xff8800,
-    emissiveIntensity: 1,
-    roughness: 0.7,
-    metalness: 0,
-  });
-
-  // Add noise texture for surface detail
-  useEffect(() => {
-    const textureLoader = new TextureLoader();
-    textureLoader.load('./noise-texture.jpg', (texture) => {
-      texture.wrapS = texture.wrapT = RepeatWrapping;
-      texture.repeat.set(2, 2);
-      sunMaterial.displacementMap = texture;
-      sunMaterial.displacementScale = 0.05;
+  // Memoize material and texture to prevent recreation
+  const { sunMaterial, noiseTexture } = useMemo(() => {
+    const material = new MeshStandardMaterial({
+      color: 0xffdd00,
+      emissive: 0xff8800,
+      emissiveIntensity: 1,
+      roughness: 0.7,
+      metalness: 0,
     });
+    
+    const textureLoader = new TextureLoader();
+    const texture = textureLoader.load('./noise-texture.jpg');
+    texture.wrapS = texture.wrapT = RepeatWrapping;
+    texture.repeat.set(2, 2);
+    material.displacementMap = texture;
+    material.displacementScale = 0.05;
+    
+    return { sunMaterial: material, noiseTexture: texture };
   }, []);
 
   // Load the base model
@@ -67,10 +67,10 @@ const Model = (props: ModelProps) => {
   }, [onError]);
 
   // Animate the sun's surface
-  useFrame((state) => {
-    if (sunMaterial.displacementMap) {
-      sunMaterial.displacementMap.offset.x += 0.001;
-      sunMaterial.displacementMap.offset.y += 0.001;
+  useFrame(() => {
+    if (noiseTexture) {
+      noiseTexture.offset.x += 0.001;
+      noiseTexture.offset.y += 0.001;
     }
   });
 

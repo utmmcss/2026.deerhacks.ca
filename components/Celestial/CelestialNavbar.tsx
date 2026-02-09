@@ -1,11 +1,10 @@
-import NextLink from 'next/link'
 import Image from 'next/image'
+import NextLink from 'next/link'
 import { useRouter } from 'next/router'
 import { useEffect, useState } from 'react'
 
-import { ArrowLeft, Menu, X } from 'lucide-react'
-
 import { useFeatureToggle } from '@/contexts/FeatureToggle'
+import { ArrowLeft, Menu, X } from 'lucide-react'
 
 import { getButtonClassName } from './buttonStyles'
 

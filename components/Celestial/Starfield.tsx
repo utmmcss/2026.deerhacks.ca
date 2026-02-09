@@ -1,6 +1,6 @@
 'use client'
 
-import { useEffect, useRef, memo } from 'react'
+import { memo, useEffect, useRef } from 'react'
 
 type Star = {
   x: number
@@ -31,7 +31,7 @@ function generateStars(
     stars.push({
       x: s1 * width,
       y: s2 * height,
-      size: s3 * 2 + 0.5,
+      size: s3 * 3 + 1, // Reduced base size for smaller stars
       brightness: s4 * 0.8 + 0.2,
     })
   }
@@ -39,6 +39,9 @@ function generateStars(
   return stars
 }
 
+/**
+ * Draws stars to a canvas using a cached star sprite for performance.
+ */
 function drawStarsToCanvas(
   canvas: HTMLCanvasElement,
   stars: Star[],
@@ -48,31 +51,55 @@ function drawStarsToCanvas(
   if (!ctx) return
 
   ctx.clearRect(0, 0, canvas.width, canvas.height)
+  ctx.save()
   ctx.scale(dpr, dpr)
 
-  stars.forEach((star) => {
-    const gradient = ctx.createRadialGradient(
-      star.x,
-      star.y,
-      0,
-      star.x,
-      star.y,
-      star.size * 3
-    )
-    gradient.addColorStop(0, `rgba(255, 248, 220, ${star.brightness})`)
-    gradient.addColorStop(0.5, `rgba(255, 215, 100, ${star.brightness * 0.3})`)
+  // Create a cached star sprite to avoid expensive radial gradients in the loop
+  const spriteSize = 64
+  const offCanvas = document.createElement('canvas')
+  offCanvas.width = spriteSize * dpr
+  offCanvas.height = spriteSize * dpr
+  const offCtx = offCanvas.getContext('2d')
+  
+  if (offCtx) {
+    offCtx.scale(dpr, dpr)
+    const centerX = spriteSize / 2
+    const centerY = spriteSize / 2
+    const radius = 16 // Further reduced glow radius
+
+    const gradient = offCtx.createRadialGradient(centerX, centerY, 0, centerX, centerY, radius)
+    gradient.addColorStop(0, 'rgba(255, 255, 255, 1)')
+    gradient.addColorStop(0.1, 'rgba(255, 245, 220, 1)')
+    gradient.addColorStop(0.2, 'rgba(255, 215, 100, 0.8)')
+    gradient.addColorStop(0.4, 'rgba(255, 215, 100, 0.4)')
+    gradient.addColorStop(0.7, 'rgba(255, 215, 100, 0.1)')
     gradient.addColorStop(1, 'rgba(255, 215, 100, 0)')
 
-    ctx.beginPath()
-    ctx.arc(star.x, star.y, star.size * 3, 0, Math.PI * 2)
-    ctx.fillStyle = gradient
-    ctx.fill()
+    offCtx.fillStyle = gradient
+    offCtx.beginPath()
+    offCtx.arc(centerX, centerY, radius, 0, Math.PI * 2)
+    offCtx.fill()
 
-    ctx.beginPath()
-    ctx.arc(star.x, star.y, star.size, 0, Math.PI * 2)
-    ctx.fillStyle = `rgba(255, 252, 245, ${star.brightness})`
-    ctx.fill()
+    // Vibrant Core
+    offCtx.fillStyle = 'rgba(255, 255, 255, 1)'
+    offCtx.beginPath()
+    offCtx.arc(centerX, centerY, 2, 0, Math.PI * 2)
+    offCtx.fill()
+  }
+
+  stars.forEach((star) => {
+    const size = star.size * 5 // Reduced rendering multiplier
+    ctx.globalAlpha = Math.min(star.brightness + 0.4, 1) 
+    ctx.drawImage(
+      offCanvas,
+      star.x - size / 2,
+      star.y - size / 2,
+      size,
+      size
+    )
   })
+
+  ctx.restore()
 }
 
 const LAYER_COUNT = 4
@@ -100,11 +127,25 @@ const Starfield = memo(function Starfield() {
       }
 
       const dpr = Math.min(window.devicePixelRatio || 1, 2)
+      const isMobile = width < 768
       const area = width * height
-      const totalStars = Math.floor(area / 4000) // Same density as original
-      const starsPerLayer = Math.floor(totalStars / LAYER_COUNT)
+      
+      // Reduce density and layers on mobile
+      const densityDivider = isMobile ? 8000 : 4000
+      const activeLayers = isMobile ? 2 : LAYER_COUNT
+      
+      const totalStars = Math.floor(area / densityDivider)
+      const starsPerLayer = Math.floor(totalStars / activeLayers)
 
-      for (let i = 0; i < LAYER_COUNT; i++) {
+      // Reset all canvases first
+      canvasRefs.current.forEach(canvas => {
+        if (canvas) {
+          const ctx = canvas.getContext('2d')
+          ctx?.clearRect(0, 0, canvas.width, canvas.height)
+        }
+      })
+
+      for (let i = 0; i < activeLayers; i++) {
         const canvas = canvasRefs.current[i]
         if (!canvas) continue
 
