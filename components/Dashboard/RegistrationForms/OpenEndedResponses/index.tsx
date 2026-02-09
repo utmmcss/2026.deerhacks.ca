@@ -5,6 +5,7 @@ import Grid from '@mui/material/Grid'
 import Typography from '@mui/material/Typography'
 
 import FormTextArea from '@/components/Dashboard/RegistrationForms/FormComponents/FormTextArea'
+import { openEndedQuestions } from '@/types/Application'
 import { OpenEndedResponsesZodForm } from '@/types/Zod'
 
 type Props = {
@@ -25,16 +26,16 @@ const OpenEndedResponsesForm = (props: Props) => {
     <form noValidate onSubmit={handleSubmit(onNext)}>
       <Grid container direction="column" gap="2.5rem">
         <Grid container direction="column" gap="1.5rem">
-          <Typography variant="h2">What do you hope to do at DeerHacks?</Typography>
+          <Typography variant="h2">{openEndedQuestions.deerhacks_pitch.question}</Typography>
           <Controller
             name="deerhacks_pitch"
             control={control}
             render={({ field: { ref, ...field } }) => (
               <FormTextArea
-                label="Your answer (150 words max)"
+                label={openEndedQuestions.deerhacks_pitch.label}
                 errors={errors}
                 inputRef={ref}
-                maxLength={1000}
+                maxLength={openEndedQuestions.deerhacks_pitch.maxLength}
                 {...field}
               />
             )}
@@ -42,19 +43,19 @@ const OpenEndedResponsesForm = (props: Props) => {
         </Grid>
 
         <Grid container direction="column" gap="1.5rem">
-          <Typography variant="h2">What would make you a valuable teammate?</Typography>
+          <Typography variant="h2">{openEndedQuestions.shared_project.question}</Typography>
           <Typography variant="h3" color="text.secondary" gutterBottom>
-            Technical skills, collaborative skills, etc. are all welcome
+            {openEndedQuestions.shared_project.helperText}
           </Typography>
           <Controller
             name="shared_project"
             control={control}
             render={({ field: { ref, ...field } }) => (
               <FormTextArea
-                label="Your answer (150 words max)"
+                label={openEndedQuestions.shared_project.label}
                 errors={errors}
                 inputRef={ref}
-                maxLength={1000}
+                maxLength={openEndedQuestions.shared_project.maxLength}
                 {...field}
               />
             )}
@@ -62,19 +63,19 @@ const OpenEndedResponsesForm = (props: Props) => {
         </Grid>
 
         <Grid container direction="column" gap="1.5rem">
-          <Typography variant="h2">What type of project would you like to work on in the near future?</Typography>
+          <Typography variant="h2">{openEndedQuestions.future_tech.question}</Typography>
           <Typography variant="h3" color="text.secondary" gutterBottom>
-            How would you approach making it come to life?
+            {openEndedQuestions.future_tech.helperText}
           </Typography>
           <Controller
             name="future_tech"
             control={control}
             render={({ field: { ref, ...field } }) => (
               <FormTextArea
-                label="Your answer (150 words max)"
+                label={openEndedQuestions.future_tech.label}
                 errors={errors}
                 inputRef={ref}
-                maxLength={1000}
+                maxLength={openEndedQuestions.future_tech.maxLength}
                 {...field}
               />
             )}
@@ -82,19 +83,19 @@ const OpenEndedResponsesForm = (props: Props) => {
         </Grid>
 
         <Grid container direction="column" gap="1.5rem">
-          <Typography variant="h2">Dream Project Pitch</Typography>
+          <Typography variant="h2">{openEndedQuestions.project_pitch.question}</Typography>
           <Typography variant="h3" color="text.secondary" gutterBottom>
-            Given no limits on tech, time, money, scale, etc, pitch a project idea.
+            {openEndedQuestions.project_pitch.helperText}
           </Typography>
           <Controller
             name="project_pitch"
             control={control}
             render={({ field: { ref, ...field } }) => (
               <FormTextArea
-                label="Your pitch (25 words max)"
+                label={openEndedQuestions.project_pitch.label}
                 errors={errors}
                 inputRef={ref}
-                maxLength={200}
+                maxLength={openEndedQuestions.project_pitch.maxLength}
                 {...field}
               />
             )}

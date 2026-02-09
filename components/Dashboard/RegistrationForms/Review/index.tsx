@@ -12,7 +12,7 @@ import Typography from '@mui/material/Typography'
 
 import ArchetypeResult from '@/components/Dashboard/RegistrationForms/Archetype/ArchetypeResult'
 import LoadingButton from '@/components/Dashboard/LoadingButton'
-import { Application, OTHER_SPECIFY, Planet } from '@/types/Application'
+import { Application, OTHER_SPECIFY, openEndedQuestions, Planet } from '@/types/Application'
 import { User } from '@/types/User'
 
 type Props = {
@@ -130,19 +130,19 @@ const FormReview = (props: Props) => {
       <Grid container direction="column" gap="1.25rem">
         <Typography variant="h2">Open Ended Responses</Typography>
         <FieldReview
-          name="Why do you want to take part in DeerHacks?"
+          name={openEndedQuestions.deerhacks_pitch.question}
           value={application.deerhacks_pitch}
         />
         <FieldReview
-          name="Share a project or initiative you've worked on that you're particularly proud of. What was your role, and what impact did it have?"
+          name={openEndedQuestions.shared_project.question}
           value={application.shared_project}
         />
         <FieldReview
-          name="In your opinion, what is the most exciting or groundbreaking technology trend right now, and how might it impact our daily lives in the future?"
+          name={openEndedQuestions.future_tech.question}
           value={application.future_tech}
         />
         <FieldReview
-          name="Describe a project you would love to build at this hackathon in 25 words or less."
+          name={openEndedQuestions.project_pitch.question}
           value={application.project_pitch}
         />
       </Grid>
