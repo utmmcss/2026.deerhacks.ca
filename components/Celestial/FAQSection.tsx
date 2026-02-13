@@ -11,7 +11,7 @@ const faqs = [
   {
     question: 'Who can participate?',
     answer:
-      "DeerHacks is currently open to all UofT students, but we are in the process of confirming whether non-UofT attendees can join, stay tuned! Whether you're a beginner or an experienced developer, applicants from all skill levels are welcome to join.",
+      "DeerHacks is now open to all students! Whether you're a beginner or an experienced developer, applicants from all skill levels are welcome to join.",
   },
   {
     question: 'Do I need a team?',
