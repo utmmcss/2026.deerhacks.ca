@@ -1,6 +1,7 @@
 import Head from 'next/head'
 import { useEffect, useState } from 'react'
 
+import AutoFixHighIcon from '@mui/icons-material/AutoFixHigh'
 import GroupAddIcon from '@mui/icons-material/GroupAdd'
 import GroupsIcon from '@mui/icons-material/Groups'
 import LockIcon from '@mui/icons-material/Lock'
@@ -33,6 +34,7 @@ import Tabs from '@mui/material/Tabs'
 import TextField from '@mui/material/TextField'
 import Tooltip from '@mui/material/Tooltip'
 import Typography from '@mui/material/Typography'
+import Autocomplete from '@mui/material/Autocomplete'
 
 import BackButton from '@/components/Shared/BackButton'
 import FullPageSpinner from '@/components/Shared/FullPageSpinner'
@@ -51,6 +53,16 @@ import {
   useTeamHeartbeat,
   useAvailableUsers,
 } from '@/hooks/Team'
+import {
+  useMatchmakingProfile,
+  useMatchmakingUpsert,
+  useMatchmakingQueueJoin,
+  useMatchmakingQueueLeave,
+  useMatchmakingRematch,
+  useMatchmakingHeartbeat,
+} from '@/hooks/Matchmaking'
+import { MATCHMAKING_ROLES, MATCHMAKING_PROJECT_PREFS } from '@/types/Matchmaking'
+import { interestsOptions } from '@/types/Application'
 import Error401Page from '@/pages/401'
 import Error404Page from '@/pages/404'
 import type { TeamMember } from '@/types/Team'
@@ -99,8 +111,24 @@ const TeamsPage = () => {
   const { mutate: disbandTeam, isLoading: isDisbanding } = useTeamDisband()
   const { mutate: heartbeat } = useTeamHeartbeat()
 
+  // Matchmaking state
+  const [matchRole, setMatchRole] = useState('')
+  const [matchProjectPref, setMatchProjectPref] = useState('')
+  const [matchInterests, setMatchInterests] = useState<string[]>([])
+  const [showMatchForm, setShowMatchForm] = useState(false)
+
   const myTeam = myTeamData?.team
   const isOwner = myTeam && user && myTeam.owner_discord_id === user.discord_id
+
+  // Matchmaking hooks
+  const { data: matchProfileData } = useMatchmakingProfile({ enabled: isAccepted && !myTeam })
+  const { mutate: upsertProfile, isLoading: isUpsertingProfile } = useMatchmakingUpsert()
+  const { mutate: joinQueue, isLoading: isJoiningQueue } = useMatchmakingQueueJoin()
+  const { mutate: leaveQueue, isLoading: isLeavingQueue } = useMatchmakingQueueLeave()
+  const { mutate: rematch, isLoading: isRematching } = useMatchmakingRematch()
+  const { mutate: matchHeartbeat } = useMatchmakingHeartbeat()
+
+  const matchProfile = matchProfileData?.profile
 
   // Determine if team is marked as full via the description tag
   const isTeamFull = myTeam?.description?.includes(FULL_TAG) ?? false
@@ -111,6 +139,13 @@ const TeamsPage = () => {
     const interval = setInterval(() => heartbeat(undefined), 10 * 60 * 1000)
     return () => clearInterval(interval)
   }, [myTeam, heartbeat])
+
+  // Matchmaking heartbeat every 60s while in queue
+  useEffect(() => {
+    if (!matchProfile?.in_queue) return
+    const interval = setInterval(() => matchHeartbeat(undefined), 60 * 1000)
+    return () => clearInterval(interval)
+  }, [matchProfile?.in_queue, matchHeartbeat])
 
   const handleCreateTeam = () => {
     if (!newTeamName.trim()) return
@@ -166,6 +201,23 @@ const TeamsPage = () => {
   const handleDisbandTeam = () => {
     if (!confirm('Are you sure you want to disband this team? This cannot be undone.')) return
     disbandTeam(undefined)
+  }
+
+  const handleMatchmakingSubmit = () => {
+    if (!matchRole || !matchProjectPref || matchInterests.length === 0) return
+    upsertProfile(
+      { data: { role: matchRole, project_preference: matchProjectPref, interests: matchInterests } },
+      { onSuccess: () => joinQueue(undefined) }
+    )
+  }
+
+  const handleLeaveQueue = () => {
+    leaveQueue(undefined)
+  }
+
+  const handleRematch = () => {
+    if (!confirm('Leave your current team and find a new match?')) return
+    rematch(undefined)
   }
 
   if (!loading && !authenticated) return <Error401Page />
@@ -604,48 +656,263 @@ const TeamsPage = () => {
                             Leave Team
                           </Button>
                         )}
+                        <Button
+                          variant="outlined"
+                          size="small"
+                          onClick={handleRematch}
+                          disabled={isRematching}
+                          startIcon={<AutoFixHighIcon />}
+                          sx={{ borderRadius: '0.75rem' }}
+                        >
+                          Find a Different Team
+                        </Button>
                       </Stack>
                     </Stack>
-                  ) : (
-                    /* No team - create form */
-                    <Card sx={{ height: 'auto' }}>
+                  ) : matchProfile?.in_queue ? (
+                    /* In matchmaking queue - waiting state */
+                    <Card
+                      sx={{
+                        height: 'auto',
+                        background:
+                          'radial-gradient(ellipse at 50% 0%, rgba(90,200,250,0.08) 0%, transparent 60%), rgba(30, 30, 35, 0.6)',
+                        border: '1px solid rgba(90,200,250,0.2)',
+                      }}
+                    >
                       <CardContent sx={{ height: 'auto' }}>
-                        <Typography variant="h5" sx={{ color: '#fff', fontWeight: 600, mb: 2 }}>
-                          Create a Team
-                        </Typography>
-                        <Typography variant="body2" color="text.secondary" sx={{ mb: 3 }}>
-                          Start a team and invite others to join you for the hackathon.
-                        </Typography>
-                        <Stack spacing={2.5} sx={{ maxWidth: 480 }}>
-                          <TextField
-                            label="Team Name"
-                            value={newTeamName}
-                            onChange={(e) => setNewTeamName(e.target.value)}
-                            inputProps={{ maxLength: 50 }}
-                            required
-                            fullWidth
-                          />
-                          <TextField
-                            label="Description (optional)"
-                            value={newTeamDescription}
-                            onChange={(e) => setNewTeamDescription(e.target.value)}
-                            inputProps={{ maxLength: 500 }}
-                            multiline
-                            rows={3}
-                            fullWidth
-                          />
+                        <Stack spacing={3} alignItems="center" sx={{ py: 3 }}>
+                          <CircularProgress size={48} />
+                          <Typography variant="h5" sx={{ color: '#fff', fontWeight: 600 }}>
+                            Looking for teammates...
+                          </Typography>
+                          <Typography variant="body2" color="text.secondary" sx={{ textAlign: 'center', maxWidth: 420 }}>
+                            Sit tight! We&apos;re finding the best match for you based on your preferences.
+                            This page will update automatically.
+                          </Typography>
+                          <Stack direction="row" spacing={1} flexWrap="wrap" useFlexGap justifyContent="center">
+                            {matchProfile.role && (
+                              <Chip
+                                label={MATCHMAKING_ROLES.find((r) => r.value === matchProfile.role)?.label ?? matchProfile.role}
+                                size="small"
+                                color="primary"
+                                sx={{ fontWeight: 500 }}
+                              />
+                            )}
+                            {matchProfile.project_preference && (
+                              <Chip
+                                label={MATCHMAKING_PROJECT_PREFS.find((p) => p.value === matchProfile.project_preference)?.label ?? matchProfile.project_preference}
+                                size="small"
+                                color="secondary"
+                                sx={{ fontWeight: 500 }}
+                              />
+                            )}
+                            {matchProfile.interests.map((interest) => (
+                              <Chip
+                                key={interest}
+                                label={interest}
+                                size="small"
+                                sx={{ height: 24, fontSize: '0.75rem' }}
+                              />
+                            ))}
+                          </Stack>
                           <Button
-                            variant="contained"
-                            onClick={handleCreateTeam}
-                            disabled={!newTeamName.trim() || isCreating}
-                            startIcon={<GroupAddIcon />}
-                            sx={{ alignSelf: 'flex-start' }}
+                            variant="outlined"
+                            color="error"
+                            size="small"
+                            onClick={handleLeaveQueue}
+                            disabled={isLeavingQueue}
+                            sx={{ borderRadius: '0.75rem' }}
                           >
-                            Create Team
+                            Leave Queue
                           </Button>
                         </Stack>
                       </CardContent>
                     </Card>
+                  ) : matchProfile?.matched_team_id != null ? (
+                    /* Matched - success state */
+                    <Card
+                      sx={{
+                        height: 'auto',
+                        background:
+                          'radial-gradient(ellipse at 50% 0%, rgba(102,187,106,0.1) 0%, transparent 60%), rgba(30, 30, 35, 0.6)',
+                        border: '1px solid rgba(102,187,106,0.3)',
+                      }}
+                    >
+                      <CardContent sx={{ height: 'auto' }}>
+                        <Stack spacing={2} alignItems="center" sx={{ py: 3 }}>
+                          <AutoFixHighIcon sx={{ fontSize: 48, color: '#66bb6a' }} />
+                          <Typography variant="h5" sx={{ color: '#fff', fontWeight: 600 }}>
+                            You&apos;ve been matched!
+                          </Typography>
+                          <Typography variant="body2" color="text.secondary" sx={{ textAlign: 'center' }}>
+                            You&apos;ve been placed on a team. This page will refresh shortly.
+                          </Typography>
+                          <CircularProgress size={24} />
+                        </Stack>
+                      </CardContent>
+                    </Card>
+                  ) : (
+                    /* No team - create form + matchmaking */
+                    <Stack spacing={3}>
+                      <Card sx={{ height: 'auto' }}>
+                        <CardContent sx={{ height: 'auto' }}>
+                          <Typography variant="h5" sx={{ color: '#fff', fontWeight: 600, mb: 2 }}>
+                            Create a Team
+                          </Typography>
+                          <Typography variant="body2" color="text.secondary" sx={{ mb: 3 }}>
+                            Start a team and invite others to join you for the hackathon.
+                          </Typography>
+                          <Stack spacing={2.5} sx={{ maxWidth: 480 }}>
+                            <TextField
+                              label="Team Name"
+                              value={newTeamName}
+                              onChange={(e) => setNewTeamName(e.target.value)}
+                              inputProps={{ maxLength: 50 }}
+                              required
+                              fullWidth
+                            />
+                            <TextField
+                              label="Description (optional)"
+                              value={newTeamDescription}
+                              onChange={(e) => setNewTeamDescription(e.target.value)}
+                              inputProps={{ maxLength: 500 }}
+                              multiline
+                              rows={3}
+                              fullWidth
+                            />
+                            <Button
+                              variant="contained"
+                              onClick={handleCreateTeam}
+                              disabled={!newTeamName.trim() || isCreating}
+                              startIcon={<GroupAddIcon />}
+                              sx={{ alignSelf: 'flex-start' }}
+                            >
+                              Create Team
+                            </Button>
+                          </Stack>
+                        </CardContent>
+                      </Card>
+
+                      <Divider sx={{ borderColor: 'rgba(255,255,255,0.1)' }}>
+                        <Typography variant="body2" color="text.secondary">
+                          or
+                        </Typography>
+                      </Divider>
+
+                      {!showMatchForm ? (
+                        <Button
+                          variant="outlined"
+                          size="large"
+                          onClick={() => setShowMatchForm(true)}
+                          startIcon={<AutoFixHighIcon />}
+                          sx={{
+                            borderRadius: '0.75rem',
+                            alignSelf: 'center',
+                            px: 4,
+                            py: 1.5,
+                          }}
+                        >
+                          Auto-Match Me
+                        </Button>
+                      ) : (
+                        <Card
+                          sx={{
+                            height: 'auto',
+                            background:
+                              'radial-gradient(ellipse at 20% 0%, rgba(171,71,188,0.08) 0%, transparent 60%), rgba(30, 30, 35, 0.6)',
+                            border: '1px solid rgba(171,71,188,0.2)',
+                          }}
+                        >
+                          <CardContent sx={{ height: 'auto' }}>
+                            <Typography variant="h5" sx={{ color: '#fff', fontWeight: 600, mb: 1 }}>
+                              Auto-Match Me
+                            </Typography>
+                            <Typography variant="body2" color="text.secondary" sx={{ mb: 3 }}>
+                              Tell us about yourself and we&apos;ll find a team that fits.
+                            </Typography>
+                            <Stack spacing={2.5} sx={{ maxWidth: 480 }}>
+                              <FormControl fullWidth required>
+                                <InputLabel>Role</InputLabel>
+                                <Select
+                                  value={matchRole}
+                                  label="Role"
+                                  onChange={(e) => setMatchRole(e.target.value)}
+                                >
+                                  {MATCHMAKING_ROLES.map((r) => (
+                                    <MenuItem key={r.value} value={r.value}>
+                                      {r.label}
+                                    </MenuItem>
+                                  ))}
+                                </Select>
+                              </FormControl>
+                              <FormControl fullWidth required>
+                                <InputLabel>Project Preference</InputLabel>
+                                <Select
+                                  value={matchProjectPref}
+                                  label="Project Preference"
+                                  onChange={(e) => setMatchProjectPref(e.target.value)}
+                                >
+                                  {MATCHMAKING_PROJECT_PREFS.map((p) => (
+                                    <MenuItem key={p.value} value={p.value}>
+                                      {p.label}
+                                    </MenuItem>
+                                  ))}
+                                </Select>
+                              </FormControl>
+                              <Autocomplete
+                                multiple
+                                options={interestsOptions as unknown as string[]}
+                                value={matchInterests}
+                                onChange={(_, newVal) => setMatchInterests(newVal)}
+                                renderTags={(value, getTagProps) =>
+                                  value.map((option, index) => (
+                                    <Chip
+                                      label={option}
+                                      size="small"
+                                      {...getTagProps({ index })}
+                                      key={option}
+                                      sx={{ height: 24, fontSize: '0.75rem' }}
+                                    />
+                                  ))
+                                }
+                                renderInput={(params) => (
+                                  <TextField
+                                    {...params}
+                                    label="Interests"
+                                    placeholder="Select interests..."
+                                    required
+                                  />
+                                )}
+                              />
+                              <Stack direction="row" spacing={2}>
+                                <Button
+                                  variant="contained"
+                                  onClick={handleMatchmakingSubmit}
+                                  disabled={
+                                    !matchRole ||
+                                    !matchProjectPref ||
+                                    matchInterests.length === 0 ||
+                                    isUpsertingProfile ||
+                                    isJoiningQueue
+                                  }
+                                  startIcon={<AutoFixHighIcon />}
+                                  sx={{ alignSelf: 'flex-start' }}
+                                >
+                                  Find Me a Team
+                                </Button>
+                                <Button
+                                  variant="text"
+                                  size="small"
+                                  onClick={() => setShowMatchForm(false)}
+                                  sx={{ alignSelf: 'flex-start' }}
+                                >
+                                  Cancel
+                                </Button>
+                              </Stack>
+                            </Stack>
+                          </CardContent>
+                        </Card>
+                      )}
+                    </Stack>
                   )}
                 </Box>
               )}
