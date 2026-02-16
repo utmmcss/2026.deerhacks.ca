@@ -39,6 +39,7 @@ import type {
   AvailableUsersResp,
   TeamMessageResp,
 } from '@/types/Team'
+import type { MatchmakingProfileReq, MatchmakingProfileResp } from '@/types/Matchmaking'
 
 export const config = (customFetch: CustomFetch) =>
   ({
@@ -50,6 +51,7 @@ export const config = (customFetch: CustomFetch) =>
     ...photos(customFetch),
     ...qrCodes(customFetch),
     ...teams(customFetch),
+    ...matchmaking(customFetch),
     ...users(customFetch),
     ..._(),
   } as const satisfies APITemplate)
@@ -242,6 +244,34 @@ const teams = (customFetch: CustomFetch) =>
     teamsDisband: async () => {
       const res = await customFetch('DELETE', 'DH_BE', '/teams')
       return res.data as TeamMessageResp
+    },
+  } as const)
+
+const matchmaking = (customFetch: CustomFetch) =>
+  ({
+    matchmakingProfileUpsert: async (args: { data: MatchmakingProfileReq }) => {
+      const res = await customFetch('POST', 'DH_BE', '/matchmaking/profile', args.data)
+      return res.data as MatchmakingProfileResp
+    },
+    matchmakingProfileGet: async () => {
+      const res = await customFetch('GET', 'DH_BE', '/matchmaking/profile')
+      return res.data as MatchmakingProfileResp
+    },
+    matchmakingHeartbeat: async () => {
+      const res = await customFetch('POST', 'DH_BE', '/matchmaking/heartbeat')
+      return res.data as MatchmakingProfileResp
+    },
+    matchmakingQueueJoin: async () => {
+      const res = await customFetch('POST', 'DH_BE', '/matchmaking/queue')
+      return res.data as MatchmakingProfileResp
+    },
+    matchmakingQueueLeave: async () => {
+      const res = await customFetch('DELETE', 'DH_BE', '/matchmaking/queue')
+      return res.data as MatchmakingProfileResp
+    },
+    matchmakingRematch: async () => {
+      const res = await customFetch('POST', 'DH_BE', '/matchmaking/rematch')
+      return res.data as MatchmakingProfileResp
     },
   } as const)
 
