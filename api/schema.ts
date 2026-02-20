@@ -38,8 +38,15 @@ import type {
   TeamsListResp,
   AvailableUsersResp,
   TeamMessageResp,
+  TeamInviteReq,
+  TeamInviteRespondReq,
+  TeamInvitesResp,
 } from '@/types/Team'
-import type { MatchmakingProfileReq, MatchmakingProfileResp } from '@/types/Matchmaking'
+import type {
+  MatchmakingProfileReq,
+  MatchmakingProfileResp,
+  PublicMatchmakingProfileResp,
+} from '@/types/Matchmaking'
 
 export const config = (customFetch: CustomFetch) =>
   ({
@@ -245,6 +252,24 @@ const teams = (customFetch: CustomFetch) =>
       const res = await customFetch('DELETE', 'DH_BE', '/teams')
       return res.data as TeamMessageResp
     },
+
+    // Send invite to a user (owner only)
+    teamsInviteSend: async (args: { data: TeamInviteReq }) => {
+      const res = await customFetch('POST', 'DH_BE', '/teams/invites', args.data)
+      return res.data as TeamMessageResp
+    },
+
+    // Get pending invites received by the current user
+    teamsInvitesReceived: async () => {
+      const res = await customFetch('GET', 'DH_BE', '/teams/invites/received')
+      return res.data as TeamInvitesResp
+    },
+
+    // Respond to a received invite (accept or reject)
+    teamsInviteRespond: async (args: { data: TeamInviteRespondReq }) => {
+      const res = await customFetch('POST', 'DH_BE', '/teams/invites/respond', args.data)
+      return res.data as TeamMessageResp
+    },
   } as const)
 
 const matchmaking = (customFetch: CustomFetch) =>
@@ -268,6 +293,10 @@ const matchmaking = (customFetch: CustomFetch) =>
     matchmakingQueueLeave: async () => {
       const res = await customFetch('DELETE', 'DH_BE', '/matchmaking/queue')
       return res.data as MatchmakingProfileResp
+    },
+    matchmakingProfilePublicGet: async (args: { userId: number }) => {
+      const res = await customFetch('GET', 'DH_BE', `/matchmaking/profile/${args.userId}`)
+      return res.data as PublicMatchmakingProfileResp
     },
     matchmakingRematch: async () => {
       const res = await customFetch('POST', 'DH_BE', '/matchmaking/rematch')
