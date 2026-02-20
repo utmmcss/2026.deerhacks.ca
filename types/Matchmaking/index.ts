@@ -37,3 +37,13 @@ export const MATCHMAKING_PROJECT_PREFS = [
   { value: 'hardware', label: 'Hardware / IoT' },
   { value: 'other', label: 'Other' },
 ] as const
+
+export type PublicMatchmakingProfile = {
+  role: string
+  project_preference: string
+  interests: string[]
+}
+
+export type PublicMatchmakingProfileResp = {
+  profile: PublicMatchmakingProfile | null
+}

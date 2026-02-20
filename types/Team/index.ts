@@ -82,3 +82,25 @@ export type AvailableUsersResp = {
 export type TeamMessageResp = {
   message: string
 }
+
+export type TeamInvite = {
+  id: number
+  team_id: number
+  team_name: string
+  owner_first_name: string
+  owner_last_name: string
+  sent_at: string
+}
+
+export type TeamInviteReq = {
+  user_id: number
+}
+
+export type TeamInviteRespondReq = {
+  invite_id: number
+  action: 'accept' | 'reject'
+}
+
+export type TeamInvitesResp = {
+  invites: TeamInvite[]
+}
