@@ -260,7 +260,7 @@ const teams = (customFetch: CustomFetch) =>
     },
 
     // Get pending invites received by the current user
-    teamsInvitesReceived: async () => {
+    teamsInvitesReceivedList: async () => {
       const res = await customFetch('GET', 'DH_BE', '/teams/invites/received')
       return res.data as TeamInvitesResp
     },
