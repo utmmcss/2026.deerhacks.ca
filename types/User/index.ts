@@ -37,7 +37,10 @@ export type UserUpdateBatchReq = {
 }
 
 export type UserLoginReq = {
-  token: string // Discord OAuth2 token
+  token: string // Discord OAuth2 authorization code (or "mock" in dev mock mode)
+  mock_email?: string
+  mock_discord_id?: string
+  mock_username?: string
 }
 
 export type User = {

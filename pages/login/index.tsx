@@ -2,13 +2,14 @@ import Head from 'next/head'
 import NextLink from 'next/link'
 import { useSearchParams } from 'next/navigation'
 import { useRouter } from 'next/router'
-import { ReactNode, useEffect, useRef } from 'react'
+import { ReactNode, useEffect, useRef, useState } from 'react'
 
 import Alert, { AlertColor } from '@mui/material/Alert'
 import Collapse from '@mui/material/Collapse'
 import Container from '@mui/material/Container'
 import Fade from '@mui/material/Fade'
 import Link from '@mui/material/Link'
+import TextField from '@mui/material/TextField'
 import Typography from '@mui/material/Typography'
 
 import SignUpButton from '@/components/HomePage/SignUpButton'
@@ -17,6 +18,7 @@ import Navbar from '@/components/Shared/Navbar'
 import { useAPI } from '@/contexts/API'
 import { useAuth } from '@/contexts/Auth'
 import { useFeatureToggle } from '@/contexts/FeatureToggle'
+import { useUserLogin } from '@/hooks/User/useUserLogin'
 import Error404Page from '@/pages/404'
 
 const Login = () => {
@@ -30,8 +32,12 @@ const Login = () => {
   const { loading, authenticated } = useAuth()
   const router = useRouter()
   const api = useAPI()
+  const { mutate: userLogin, isLoading: isMockLoggingIn } = useUserLogin()
 
   const path = process.env.NEXT_PUBLIC_DISCORD_OAUTH2_URL ?? ''
+  const authProvider = (process.env.NEXT_PUBLIC_AUTH_PROVIDER ?? 'discord').toLowerCase()
+  const isMockAuth = authProvider === 'mock'
+  const [mockEmail, setMockEmail] = useState('dummy1@test.local')
 
   const handleStorage = (e: any) => {
     initialized.current = true
@@ -54,6 +60,14 @@ const Login = () => {
     if (loading || !authenticated) return
     router.replace('/dashboard')
   }, [loading, authenticated, router, toggles.dashboard])
+
+  const handleContinue = () => {
+    if (isMockAuth) {
+      userLogin({ token: 'mock', mock_email: mockEmail.trim() || 'dummy1@test.local' })
+      return
+    }
+    window.open(path, '_blank', 'width=500,height=750')
+  }
 
   if (!toggles.dashboard) return <Error404Page />
   if ((loading && !authenticated) || (!loading && authenticated)) return <FullPageSpinner />
@@ -107,14 +121,25 @@ const Login = () => {
                 </Alert>
               </Collapse>
               <SignUpButton
-                text="Continue"
+                text={isMockAuth ? 'Continue (Mock Auth)' : 'Continue'}
                 fullWidth
-                disabled={toggles.applicationsPaused}
-                onClick={() => window.open(path, '_blank', 'width=500,height=750')}
+                disabled={toggles.applicationsPaused || isMockLoggingIn}
+                onClick={handleContinue}
               />
+              {isMockAuth && (
+                <TextField
+                  fullWidth
+                  size="small"
+                  label="Mock User Email"
+                  value={mockEmail}
+                  onChange={(e) => setMockEmail(e.target.value)}
+                  helperText="Dev mode only. Example: dummy1@test.local"
+                />
+              )}
               <Typography fontSize="0.75rem">
-                By clicking “Continue with Discord” above, you acknowledge that you have read and
-                understood, and agree to DeerHacks'{' '}
+                By clicking “Continue
+                {isMockAuth ? ' (Mock Auth)' : ' with Discord'}” above, you acknowledge that you
+                have read and understood, and agree to DeerHacks'{' '}
                 <Link component={NextLink} href="/code" underline="always" sx={{ opacity: 0.75 }}>
                   Code of Conduct
                 </Link>{' '}

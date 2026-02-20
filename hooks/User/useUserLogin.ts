@@ -10,7 +10,11 @@ export const useUserLogin = () => {
   return api.useMutation('userLogin', {
     onSuccess: () => {
       localStorage.setItem('deerhacks-last-login', Date.now().toString())
-      window.close()
+      if (window.opener && !window.opener.closed) {
+        window.close()
+      } else {
+        router.replace('/dashboard')
+      }
     },
     onError: (err) => {
       if ((err as APIError).apiError.status == 403) {
