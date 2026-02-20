@@ -14,7 +14,7 @@ import Typography from '@mui/material/Typography'
 import Modal from '@/components/Dashboard/Modal'
 import { useMatchmakingProfilePublic } from '@/hooks/Matchmaking'
 import { useTeamInviteSend } from '@/hooks/Team'
-import { MATCHMAKING_ROLES, MATCHMAKING_PROJECT_PREFS } from '@/types/Matchmaking'
+import { MATCHMAKING_PROJECT_PREFS,MATCHMAKING_ROLES } from '@/types/Matchmaking'
 import type { AvailableUser, TeamMember } from '@/types/Team'
 
 /** Generate a consistent color from a string (matches TeamsPage utility) */

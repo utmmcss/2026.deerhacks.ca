@@ -9,6 +9,7 @@ import LockOpenIcon from '@mui/icons-material/LockOpen'
 import MailIcon from '@mui/icons-material/Mail'
 import PersonSearchIcon from '@mui/icons-material/PersonSearch'
 import Alert from '@mui/material/Alert'
+import Autocomplete from '@mui/material/Autocomplete'
 import Avatar from '@mui/material/Avatar'
 import AvatarGroup from '@mui/material/AvatarGroup'
 import Box from '@mui/material/Box'
@@ -35,41 +36,40 @@ import Tabs from '@mui/material/Tabs'
 import TextField from '@mui/material/TextField'
 import Tooltip from '@mui/material/Tooltip'
 import Typography from '@mui/material/Typography'
-import Autocomplete from '@mui/material/Autocomplete'
 
 import UserProfileModal from '@/components/Dashboard/UserProfileModal'
 import BackButton from '@/components/Shared/BackButton'
 import FullPageSpinner from '@/components/Shared/FullPageSpinner'
 import { useAuth } from '@/contexts/Auth'
 import {
-  useTeamGet,
-  useTeamsList,
-  useTeamCreate,
-  useTeamUpdate,
-  useTeamRequestJoin,
-  useTeamRespondJoin,
-  useTeamRemoveMember,
-  useTeamLeave,
-  useTeamTransfer,
-  useTeamDisband,
-  useTeamHeartbeat,
-  useAvailableUsers,
-  useTeamInvitesReceived,
-  useTeamInviteRespond,
-} from '@/hooks/Team'
-import {
+  useMatchmakingHeartbeat,
   useMatchmakingProfile,
-  useMatchmakingUpsert,
   useMatchmakingQueueJoin,
   useMatchmakingQueueLeave,
   useMatchmakingRematch,
-  useMatchmakingHeartbeat,
+  useMatchmakingUpsert,
 } from '@/hooks/Matchmaking'
-import { MATCHMAKING_ROLES, MATCHMAKING_PROJECT_PREFS } from '@/types/Matchmaking'
-import { interestsOptions } from '@/types/Application'
+import {
+  useAvailableUsers,
+  useTeamCreate,
+  useTeamDisband,
+  useTeamGet,
+  useTeamHeartbeat,
+  useTeamInviteRespond,
+  useTeamInvitesReceived,
+  useTeamLeave,
+  useTeamRemoveMember,
+  useTeamRequestJoin,
+  useTeamRespondJoin,
+  useTeamsList,
+  useTeamTransfer,
+  useTeamUpdate,
+} from '@/hooks/Team'
 import Error401Page from '@/pages/401'
 import Error404Page from '@/pages/404'
-import type { TeamMember, AvailableUser } from '@/types/Team'
+import { interestsOptions } from '@/types/Application'
+import { MATCHMAKING_PROJECT_PREFS,MATCHMAKING_ROLES } from '@/types/Matchmaking'
+import type { AvailableUser,TeamMember } from '@/types/Team'
 
 const FULL_TAG = '[FULL]'
 
