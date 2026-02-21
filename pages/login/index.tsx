@@ -52,7 +52,12 @@ const Login = () => {
 
   useEffect(() => {
     if (loading || !authenticated) return
-    router.replace('/dashboard')
+    const redirect = searchParams.get('redirect')
+    const safeRedirect =
+      redirect && redirect.startsWith('/') && !redirect.startsWith('//')
+        ? redirect
+        : '/dashboard'
+    router.replace(safeRedirect)
   }, [loading, authenticated, router, toggles.dashboard])
 
   if (!toggles.dashboard) return <Error404Page />
