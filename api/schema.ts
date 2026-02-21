@@ -21,6 +21,15 @@ import { EventListResp, eventListStatic } from '@/types/Event'
 import { PhotoListResp, photoListStatic } from '@/types/Photo'
 import { QRCheckInReq, QRCheckInResp, QRUserGetParams } from '@/types/QRCode'
 import {
+  EventRedemptionsResp,
+  PointAdjustReq,
+  PointAdjustResp,
+  QRTokenResp,
+  UserPointsResp,
+  WorkshopClaimReq,
+  WorkshopClaimResp,
+} from '@/types/Workshop'
+import {
   UserGetResp,
   UserListParams,
   UserListResp,
@@ -39,6 +48,7 @@ export const config = (customFetch: CustomFetch) =>
     ...photos(customFetch),
     ...qrCodes(customFetch),
     ...users(customFetch),
+    ...workshop(customFetch),
     ..._(),
   } as const satisfies APITemplate)
 
@@ -180,6 +190,31 @@ const users = (customFetch: CustomFetch) =>
     userLogout: async () => {
       const res = await customFetch('POST', 'DH_BE', '/user-logout')
       return res.data as {}
+    },
+  } as const)
+
+const workshop = (customFetch: CustomFetch) =>
+  ({
+    workshopClaim: async (args: WorkshopClaimReq) => {
+      const res = await customFetch('POST', 'DH_BE', '/workshop-claim', args)
+      return res.data as WorkshopClaimResp
+    },
+    userPoints: async (args?: { discord_id?: string }) => {
+      const params = args?.discord_id ? `?discord_id=${args.discord_id}` : ''
+      const res = await customFetch('GET', 'DH_BE', `/user-points${params}`)
+      return res.data as UserPointsResp
+    },
+    adminQRToken: async (args: { id: number }) => {
+      const res = await customFetch('GET', 'DH_BE', `/admin/events/${args.id}/qr-token`)
+      return res.data as QRTokenResp
+    },
+    adminEventRedemptions: async (args: { id: number }) => {
+      const res = await customFetch('GET', 'DH_BE', `/admin/events/${args.id}/redemptions`)
+      return res.data as EventRedemptionsResp
+    },
+    adminPointsAdjust: async (args: PointAdjustReq) => {
+      const res = await customFetch('POST', 'DH_BE', '/admin/user-points-adjust', args)
+      return res.data as PointAdjustResp
     },
   } as const)
 
