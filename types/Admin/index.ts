@@ -11,6 +11,8 @@ export type EventCreateReq = {
   host: EventHosts
   presenter?: string
   type: EventTypes
+  points_value?: number
+  qr_active?: boolean
 }
 
 export type EventUpdateReq = Partial<EventCreateReq>
