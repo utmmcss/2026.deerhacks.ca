@@ -10,6 +10,7 @@ import Grid from '@mui/material/Grid'
 
 import Starfield from '@/components/Celestial/Starfield'
 import TileChecklist from '@/components/Dashboard/TileChecklist'
+import TilePoints from '@/components/Dashboard/TilePoints'
 import TileDevpost from '@/components/Dashboard/TileDevpost'
 import TileHackerPack from '@/components/Dashboard/TileHackerPack'
 import TileInstagram from '@/components/Dashboard/TileInstagram'
@@ -166,6 +167,13 @@ const Dashboard = () => {
                     <Grid item xs={12}>
                       <TileStatus status={user.status} />
                     </Grid>
+                    {['accepted', 'attended', 'admin', 'moderator', 'volunteer', 'guest'].includes(
+                      user.status
+                    ) && (
+                      <Grid item xs={12}>
+                        <TilePoints />
+                      </Grid>
+                    )}
                     <Grid item xs={6}>
                       <TileChecklist />
                     </Grid>
