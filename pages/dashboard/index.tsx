@@ -1,7 +1,9 @@
 import Head from 'next/head'
+import NextLink from 'next/link'
 
 import Alert from '@mui/material/Alert'
 import Box from '@mui/material/Box'
+import Button from '@mui/material/Button'
 import Container from '@mui/material/Container'
 import Fade from '@mui/material/Fade'
 import Grid from '@mui/material/Grid'
@@ -135,6 +137,19 @@ const Dashboard = () => {
                     {user.status !== 'volunteer' && (
                       <Grid item xs={12} md>
                         <TileUsersTable />
+                      </Grid>
+                    )}
+                    {['admin', 'moderator'].includes(user.status) && (
+                      <Grid item xs={12} md="auto">
+                        <Button
+                          component={NextLink}
+                          href="/dashboard/workshop-qr"
+                          variant="outlined"
+                          fullWidth
+                          sx={{ height: '100%', minHeight: 56 }}
+                        >
+                          Workshop QR Display
+                        </Button>
                       </Grid>
                     )}
                   </Grid>
