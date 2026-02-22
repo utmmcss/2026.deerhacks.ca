@@ -24,6 +24,7 @@ import TableFooter from '@/components/Dashboard/UsersTableComponents/TableFooter
 import TableToolbar from '@/components/Dashboard/UsersTableComponents/TableToolbar'
 import BackButton from '@/components/Shared/BackButton'
 import FullPageSpinner from '@/components/Shared/FullPageSpinner'
+import { useAPI } from '@/contexts/API'
 import { useAuth } from '@/contexts/Auth'
 import { useFeatureToggle } from '@/contexts/FeatureToggle'
 import { useUserList } from '@/hooks/User/useUserList'
@@ -43,6 +44,7 @@ import {
 type PointsSectionProps = { discordId: string }
 
 const PointsSection = ({ discordId }: PointsSectionProps) => {
+  const api = useAPI()
   const { data, isLoading } = useUserPoints({ enabled: true, discordId })
   const { mutate: adjustPoints, isLoading: isAdjusting } = useAdminPointsAdjust()
 
@@ -58,9 +60,11 @@ const PointsSection = ({ discordId }: PointsSectionProps) => {
     adjustPoints(
       { discord_id: discordId, delta: -amount, adjustment_type: adjType, reason: reason.trim() },
       {
+        // Note: hook-level onSuccess (shows toast) also fires — TanStack Query v4 merges both.
         onSuccess: () => {
           setDeductAmount('')
           setReason('')
+          api.queryClient.invalidateQueries({ queryKey: ['userPointsGet'] })
         },
       }
     )
