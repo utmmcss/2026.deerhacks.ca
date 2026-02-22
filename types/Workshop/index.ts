@@ -29,7 +29,7 @@ export type UserPointsResp = {
 }
 
 export type QRTokenResp = {
-  qr_url: string
+  token: string
   expires_in: number
 }
 

@@ -91,9 +91,9 @@ const WorkshopQRPage = () => {
             Workshop QR Display
           </Typography>
 
-          <Box display="flex" gap={3} flexDirection={{ xs: 'column', md: 'row' }}>
+          <Box component="div" sx={{ display: 'flex', gap: 3, flexDirection: { xs: 'column', md: 'row' } }}>
             {/* Left: Controls + live feed */}
-            <Box flex={1} display="flex" flexDirection="column" gap={2}>
+            <Box component="div" sx={{ flex: 1, display: 'flex', flexDirection: 'column', gap: 2 }}>
               <FormControl fullWidth>
                 <InputLabel>Select Workshop</InputLabel>
                 <Select
@@ -116,7 +116,7 @@ const WorkshopQRPage = () => {
 
               {selectedEvent && (
                 <Paper sx={{ p: 2, borderRadius: '1rem' }}>
-                  <Box display="flex" alignItems="center" justifyContent="space-between">
+                  <Box component="div" sx={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
                     <Typography fontWeight="bold">QR Active</Typography>
                     <Switch
                       checked={selectedEvent.attributes.qr_active ?? false}
@@ -167,7 +167,7 @@ const WorkshopQRPage = () => {
             </Box>
 
             {/* Right: QR display */}
-            <Box flex={1} display="flex" flexDirection="column" alignItems="center" gap={2}>
+            <Box component="div" sx={{ flex: 1, display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 2 }}>
               <Paper
                 ref={qrContainerRef}
                 sx={{
@@ -183,9 +183,12 @@ const WorkshopQRPage = () => {
                   '&:fullscreen': { background: 'white', justifyContent: 'center' },
                 }}
               >
-                {tokenData?.qr_url ? (
+                {tokenData?.token ? (
                   <>
-                    <QRCodeSVG value={tokenData.qr_url} size={280} />
+                    <QRCodeSVG
+                      value={`${window.location.origin}/claim?event_id=${selectedEventId}&token=${tokenData.token}`}
+                      size={280}
+                    />
                     <Typography color="black" variant="h6" textAlign="center">
                       {selectedEvent?.attributes.title}
                     </Typography>
@@ -210,7 +213,7 @@ const WorkshopQRPage = () => {
                 variant="outlined"
                 startIcon={<FullscreenIcon />}
                 onClick={handleFullscreen}
-                disabled={!tokenData?.qr_url}
+                disabled={!tokenData?.token}
               >
                 Fullscreen
               </Button>
