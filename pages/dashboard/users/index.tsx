@@ -354,20 +354,20 @@ const UsersTable = (props: Props) => {
             )}
           </Box>
         </Modal>
-      <Modal
-        open={openPoints}
-        title={`Points — ${pointsData?.first_name ?? ''} ${pointsData?.last_name ?? ''}`}
-        onClose={() => setOpenPoints(false)}
-        TransitionProps={{
-          onExited: () => setPointsData(undefined),
-        }}
-        keepMounted
-        maxWidth="sm"
-      >
-        <Box component="div" sx={{ pb: '1.5rem' }}>
-          {pointsData && <PointsSection discordId={pointsData.discord_id} />}
-        </Box>
-      </Modal>
+        <Modal
+          open={openPoints}
+          title={`Points — ${pointsData?.first_name ?? ''} ${pointsData?.last_name ?? ''}`}
+          onClose={() => setOpenPoints(false)}
+          TransitionProps={{
+            onExited: () => setPointsData(undefined),
+          }}
+          keepMounted
+          maxWidth="sm"
+        >
+          <Box component="div" sx={{ pb: '1.5rem' }}>
+            {pointsData && <PointsSection discordId={pointsData.discord_id} />}
+          </Box>
+        </Modal>
       </Suspense>
     </>
   )
