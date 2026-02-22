@@ -65,6 +65,7 @@ const PointsSection = ({ discordId }: PointsSectionProps) => {
           setDeductAmount('')
           setReason('')
           api.queryClient.invalidateQueries({ queryKey: ['userPointsGet'] })
+          api.queryClient.invalidateQueries({ queryKey: ['userList'] })
         },
       }
     )
