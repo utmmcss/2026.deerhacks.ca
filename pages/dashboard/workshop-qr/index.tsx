@@ -47,7 +47,7 @@ const WorkshopQRPage = () => {
     if (!tokenData) return
     setCountdown(tokenData.expires_in)
     const interval = setInterval(() => {
-      setCountdown((prev) => (prev <= 1 ? 30 : prev - 1))
+      setCountdown((prev) => (prev <= 1 ? 600 : prev - 1))
     }, 1000)
     return () => clearInterval(interval)
   }, [tokenData])

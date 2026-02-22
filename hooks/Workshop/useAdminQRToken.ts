@@ -4,7 +4,7 @@ import { useAPI } from '@/contexts/API'
 export const useAdminQRToken = (eventId: number | null) => {
   return useAPI().useQuery(['adminQRTokenGet', { id: eventId as number }], {
     enabled: eventId !== null,
-    refetchInterval: 25_000,
+    refetchInterval: 570_000, // 9m30s — refresh before the 10-minute bucket expires
     staleTime: 0,
   })
 }
