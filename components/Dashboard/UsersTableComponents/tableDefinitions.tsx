@@ -292,7 +292,7 @@ export const getColumns = (props: GetColumnsProps): GridColDef[] => {
           <Typography variant="body2" sx={{ flexShrink: 0 }}>
             {params.row.total_points ?? 0} pts
           </Typography>
-          <Tooltip title="Adjust Points" key={params.row.username}>
+          <Tooltip title="Adjust Points">
             <span>
               <GridActionsCellItem
                 icon={<EditIcon sx={{ fontSize: 18 }} />}
