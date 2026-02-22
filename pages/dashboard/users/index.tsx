@@ -54,15 +54,16 @@ const PointsSection = ({ discordId }: PointsSectionProps) => {
 
   const handleSubmit = () => {
     const amount = parseInt(deductAmount)
-    if (!amount || amount <= 0 || !reason.trim()) return
-    adjustPoints({
-      discord_id: discordId,
-      delta: -amount,
-      adjustment_type: adjType,
-      reason: reason.trim(),
-    })
-    setDeductAmount('')
-    setReason('')
+    if (isNaN(amount) || amount <= 0 || !reason.trim()) return
+    adjustPoints(
+      { discord_id: discordId, delta: -amount, adjustment_type: adjType, reason: reason.trim() },
+      {
+        onSuccess: () => {
+          setDeductAmount('')
+          setReason('')
+        },
+      }
+    )
   }
 
   return (
@@ -121,7 +122,7 @@ const PointsSection = ({ discordId }: PointsSectionProps) => {
           size="small"
           sx={{ width: 160 }}
           type="number"
-          inputProps={{ min: 1 }}
+          inputProps={{ min: 1, step: 1 }}
         />
         <TextField
           select
