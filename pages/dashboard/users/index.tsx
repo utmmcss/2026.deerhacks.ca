@@ -46,22 +46,22 @@ const PointsSection = ({ discordId }: PointsSectionProps) => {
   const { data, isLoading } = useUserPoints({ enabled: true, discordId })
   const { mutate: adjustPoints, isLoading: isAdjusting } = useAdminPointsAdjust()
 
-  const [delta, setDelta] = useState('')
+  const [deductAmount, setDeductAmount] = useState('')
   const [adjType, setAdjType] = useState<'manual_adjustment' | 'prize_redemption'>(
     'manual_adjustment'
   )
   const [reason, setReason] = useState('')
 
   const handleSubmit = () => {
-    const deltaNum = parseInt(delta)
-    if (!deltaNum || !reason.trim()) return
+    const amount = parseInt(deductAmount)
+    if (!amount || amount <= 0 || !reason.trim()) return
     adjustPoints({
       discord_id: discordId,
-      delta: deltaNum,
+      delta: -amount,
       adjustment_type: adjType,
       reason: reason.trim(),
     })
-    setDelta('')
+    setDeductAmount('')
     setReason('')
   }
 
@@ -111,16 +111,17 @@ const PointsSection = ({ discordId }: PointsSectionProps) => {
       )}
       <Divider sx={{ my: 2 }} />
       <Typography variant="subtitle1" mb={1}>
-        Adjust Points
+        Deduct Points
       </Typography>
       <Box display="flex" gap={1} flexWrap="wrap" alignItems="flex-start">
         <TextField
-          label="Delta (e.g. -50)"
-          value={delta}
-          onChange={(e) => setDelta(e.target.value)}
+          label="Points to Deduct"
+          value={deductAmount}
+          onChange={(e) => setDeductAmount(e.target.value)}
           size="small"
           sx={{ width: 160 }}
           type="number"
+          inputProps={{ min: 1 }}
         />
         <TextField
           select
@@ -146,7 +147,7 @@ const PointsSection = ({ discordId }: PointsSectionProps) => {
         <Button
           variant="contained"
           onClick={handleSubmit}
-          disabled={isAdjusting || !delta || !reason.trim()}
+          disabled={isAdjusting || !deductAmount || parseInt(deductAmount) <= 0 || !reason.trim()}
           size="small"
           sx={{ height: 40 }}
         >
