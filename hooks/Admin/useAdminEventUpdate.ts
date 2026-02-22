@@ -17,6 +17,7 @@ export const useAdminEventUpdate = () => {
       setToast({ type: 'success', message: 'Event updated successfully' })
       api.queryClient.invalidateQueries({ queryKey: ['adminEventList'] })
       api.queryClient.invalidateQueries({ queryKey: ['eventList'] })
+      api.queryClient.invalidateQueries({ queryKey: ['adminQRTokenGet'] })
     },
   })
 }
