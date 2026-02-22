@@ -43,7 +43,7 @@ const ClaimPage = () => {
 
   // Attempt claim once authenticated and query params are available
   useEffect(() => {
-    if (!authenticated || !event_id || !token || typeof token !== 'string' || isNaN(eventId)) return
+    if (!router.isReady || !authenticated || !event_id || !token || typeof token !== 'string' || isNaN(eventId)) return
     if (hasClaimed.current) return
     hasClaimed.current = true
 
@@ -64,7 +64,7 @@ const ClaimPage = () => {
       }
     )
   // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [authenticated, event_id, token])
+  }, [router.isReady, authenticated, event_id, token])
 
   const renderContent = () => {
     switch (state) {
