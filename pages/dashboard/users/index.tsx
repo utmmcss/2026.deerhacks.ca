@@ -220,6 +220,7 @@ const UsersTable = (props: Props) => {
     internal_status: toggles.internalFields,
     internal_notes: toggles.internalFields,
     application: true,
+    total_points: true,
   })
 
   useEffect(() => {
@@ -237,6 +238,13 @@ const UsersTable = (props: Props) => {
   const handleOpenApplication = (data: UserListData) => {
     setApplicationData(data)
     setOpenApplication(true)
+  }
+
+  const [pointsData, setPointsData] = useState<UserListData>()
+  const [openPoints, setOpenPoints] = useState(false)
+  const handleOpenPoints = (data: UserListData) => {
+    setPointsData(data)
+    setOpenPoints(true)
   }
 
   const hasUnsavedChanges = updateReq.users.length > 0
@@ -281,6 +289,7 @@ const UsersTable = (props: Props) => {
           setUsers,
           setUpdateReq,
           setApplicationData: handleOpenApplication,
+          setPointsData: handleOpenPoints,
           originalData,
           userStatus,
           statusUpdateToggle: toggles.statusUpdates || userStatus === 'admin',
@@ -341,11 +350,24 @@ const UsersTable = (props: Props) => {
                   }}
                   hideDisclaimer
                 />
-                <PointsSection discordId={applicationData.discord_id} />
               </>
             )}
           </Box>
         </Modal>
+      <Modal
+        open={openPoints}
+        title={`Points — ${pointsData?.first_name ?? ''} ${pointsData?.last_name ?? ''}`}
+        onClose={() => setOpenPoints(false)}
+        TransitionProps={{
+          onExited: () => setPointsData(undefined),
+        }}
+        keepMounted
+        maxWidth="sm"
+      >
+        <Box component="div" sx={{ pb: '1.5rem' }}>
+          {pointsData && <PointsSection discordId={pointsData.discord_id} />}
+        </Box>
+      </Modal>
       </Suspense>
     </>
   )
