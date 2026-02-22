@@ -55,7 +55,7 @@ const ClaimPage = () => {
           setState('success')
         },
         onError: (err: any) => {
-          const status = err?.apiError?.response?.status ?? err?.response?.status
+          const status = err?.apiError?.status
           if (status === 409) setState('already_claimed')
           else if (status === 410) setState('expired')
           else if (status === 403) setState('inactive')
@@ -70,7 +70,7 @@ const ClaimPage = () => {
     switch (state) {
       case 'loading':
         return (
-          <Box display="flex" flexDirection="column" alignItems="center" gap={2}>
+          <Box component="div" sx={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 2 }}>
             <CircularProgress />
             <Typography color="text.secondary">Claiming your points...</Typography>
           </Box>
@@ -78,7 +78,7 @@ const ClaimPage = () => {
 
       case 'success':
         return (
-          <Box display="flex" flexDirection="column" alignItems="center" gap={2} textAlign="center">
+          <Box component="div" sx={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 2, textAlign: 'center' }}>
             <CheckCircleOutlineIcon sx={{ fontSize: 72, color: 'success.main' }} />
             <Typography variant="h5" fontWeight="bold">
               Points Claimed!
@@ -104,7 +104,7 @@ const ClaimPage = () => {
 
       case 'already_claimed':
         return (
-          <Box display="flex" flexDirection="column" alignItems="center" gap={2} textAlign="center">
+          <Box component="div" sx={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 2, textAlign: 'center' }}>
             <ErrorOutlineIcon sx={{ fontSize: 72, color: 'warning.main' }} />
             <Typography variant="h5" fontWeight="bold">
               Already Claimed
@@ -120,7 +120,7 @@ const ClaimPage = () => {
 
       case 'expired':
         return (
-          <Box display="flex" flexDirection="column" alignItems="center" gap={2} textAlign="center">
+          <Box component="div" sx={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 2, textAlign: 'center' }}>
             <ErrorOutlineIcon sx={{ fontSize: 72, color: 'error.main' }} />
             <Typography variant="h5" fontWeight="bold">
               QR Code Expired
@@ -133,7 +133,7 @@ const ClaimPage = () => {
 
       case 'inactive':
         return (
-          <Box display="flex" flexDirection="column" alignItems="center" gap={2} textAlign="center">
+          <Box component="div" sx={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 2, textAlign: 'center' }}>
             <ErrorOutlineIcon sx={{ fontSize: 72, color: 'error.main' }} />
             <Typography variant="h5" fontWeight="bold">
               Not Active
@@ -146,7 +146,7 @@ const ClaimPage = () => {
 
       default:
         return (
-          <Box display="flex" flexDirection="column" alignItems="center" gap={2} textAlign="center">
+          <Box component="div" sx={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 2, textAlign: 'center' }}>
             <ErrorOutlineIcon sx={{ fontSize: 72, color: 'error.main' }} />
             <Typography variant="h5" fontWeight="bold">
               Something went wrong
@@ -175,6 +175,7 @@ const ClaimPage = () => {
         }}
       >
         <Box
+          component="div"
           sx={{
             background: 'rgba(255,255,255,0.05)',
             border: '1px solid rgba(255,255,255,0.1)',

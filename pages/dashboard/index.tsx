@@ -37,7 +37,9 @@ const Dashboard = () => {
 
   // Fetch application data to get archetype (only for completed applications)
   const shouldFetchArchetype =
-    authenticated && user?.status && !['pending', 'registering'].includes(user.status)
+    authenticated &&
+    user?.status &&
+    !['pending', 'registering', 'admin', 'moderator', 'volunteer', 'guest'].includes(user.status)
 
   const { data: applicationData } = useApplicationGet({
     enabled: !!shouldFetchArchetype,
