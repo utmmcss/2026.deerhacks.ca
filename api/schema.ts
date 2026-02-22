@@ -199,16 +199,16 @@ const workshop = (customFetch: CustomFetch) =>
       const res = await customFetch('POST', 'DH_BE', '/workshop-claim', args)
       return res.data as WorkshopClaimResp
     },
-    userPoints: async (args?: { discord_id?: string }) => {
+    userPointsGet: async (args?: { discord_id?: string }) => {
       const params = args?.discord_id ? `?discord_id=${args.discord_id}` : ''
       const res = await customFetch('GET', 'DH_BE', `/user-points${params}`)
       return res.data as UserPointsResp
     },
-    adminQRToken: async (args: { id: number }) => {
+    adminQRTokenGet: async (args: { id: number }) => {
       const res = await customFetch('GET', 'DH_BE', `/admin/events/${args.id}/qr-token`)
       return res.data as QRTokenResp
     },
-    adminEventRedemptions: async (args: { id: number }) => {
+    adminEventRedemptionsList: async (args: { id: number }) => {
       const res = await customFetch('GET', 'DH_BE', `/admin/events/${args.id}/redemptions`)
       return res.data as EventRedemptionsResp
     },

@@ -34,7 +34,7 @@ const TilePoints = () => {
             {data?.total_points ?? 0} pts
           </Typography>
           {data?.redemptions && data.redemptions.length > 0 && (
-            <Box mt={1} display="flex" flexDirection="column" gap={0.5}>
+            <Box component="div" sx={{ mt: 1, display: 'flex', flexDirection: 'column', gap: 0.5 }}>
               {data.redemptions.slice(0, 3).map((r, i) => (
                 <Typography key={i} variant="body2" color="text.secondary">
                   +{r.points_awarded} — {r.event_title}

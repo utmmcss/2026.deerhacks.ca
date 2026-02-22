@@ -4,8 +4,11 @@ import { useRouter } from 'next/router'
 import { Dispatch, SetStateAction, Suspense, useEffect, useState } from 'react'
 
 import Box from '@mui/material/Box'
+import Button from '@mui/material/Button'
 import Container from '@mui/material/Container'
+import Divider from '@mui/material/Divider'
 import Fade from '@mui/material/Fade'
+import TextField from '@mui/material/TextField'
 import Typography from '@mui/material/Typography'
 import {
   DataGrid,
@@ -25,6 +28,8 @@ import { useAuth } from '@/contexts/Auth'
 import { useFeatureToggle } from '@/contexts/FeatureToggle'
 import { useUserList } from '@/hooks/User/useUserList'
 import { useUserUpdateBatch } from '@/hooks/User/useUserUpdateBatch'
+import { useAdminPointsAdjust } from '@/hooks/Workshop/useAdminPointsAdjust'
+import { useUserPoints } from '@/hooks/Workshop/useUserPoints'
 import Error404Page from '@/pages/404'
 import Error500Page from '@/pages/500'
 import {
@@ -34,6 +39,123 @@ import {
   userStatuses,
   UserUpdateBatchReq,
 } from '@/types/User'
+
+type PointsSectionProps = { discordId: string }
+
+const PointsSection = ({ discordId }: PointsSectionProps) => {
+  const { data, isLoading } = useUserPoints({ enabled: true, discordId })
+  const { mutate: adjustPoints, isLoading: isAdjusting } = useAdminPointsAdjust()
+
+  const [delta, setDelta] = useState('')
+  const [adjType, setAdjType] = useState<'manual_adjustment' | 'prize_redemption'>(
+    'manual_adjustment'
+  )
+  const [reason, setReason] = useState('')
+
+  const handleSubmit = () => {
+    const deltaNum = parseInt(delta)
+    if (!deltaNum || !reason.trim()) return
+    adjustPoints({
+      discord_id: discordId,
+      delta: deltaNum,
+      adjustment_type: adjType,
+      reason: reason.trim(),
+    })
+    setDelta('')
+    setReason('')
+  }
+
+  return (
+    <Box mt={2}>
+      <Divider sx={{ my: 2 }} />
+      <Typography variant="h6" mb={1}>
+        Workshop Points
+      </Typography>
+      {isLoading ? (
+        <Typography color="text.secondary" variant="body2">
+          Loading…
+        </Typography>
+      ) : (
+        <>
+          <Typography variant="h4" fontWeight="bold" color="primary.main" mb={1}>
+            {data?.total_points ?? 0} pts
+          </Typography>
+          {data?.redemptions && data.redemptions.length > 0 && (
+            <Box mb={2}>
+              <Typography variant="subtitle2" mb={0.5}>
+                Redemptions
+              </Typography>
+              {data.redemptions.map((r, i) => (
+                <Typography key={i} variant="body2" color="text.secondary">
+                  +{r.points_awarded} — {r.event_title} (
+                  {new Date(r.redeemed_at).toLocaleString()})
+                </Typography>
+              ))}
+            </Box>
+          )}
+          {data?.adjustments && data.adjustments.length > 0 && (
+            <Box mb={2}>
+              <Typography variant="subtitle2" mb={0.5}>
+                Adjustments
+              </Typography>
+              {data.adjustments.map((a, i) => (
+                <Typography key={i} variant="body2" color="text.secondary">
+                  {a.delta > 0 ? '+' : ''}
+                  {a.delta} [{a.adjustment_type}] — {a.reason} (
+                  {new Date(a.adjusted_at).toLocaleString()})
+                </Typography>
+              ))}
+            </Box>
+          )}
+        </>
+      )}
+      <Divider sx={{ my: 2 }} />
+      <Typography variant="subtitle1" mb={1}>
+        Adjust Points
+      </Typography>
+      <Box display="flex" gap={1} flexWrap="wrap" alignItems="flex-start">
+        <TextField
+          label="Delta (e.g. -50)"
+          value={delta}
+          onChange={(e) => setDelta(e.target.value)}
+          size="small"
+          sx={{ width: 160 }}
+          type="number"
+        />
+        <TextField
+          select
+          label="Type"
+          value={adjType}
+          onChange={(e) =>
+            setAdjType(e.target.value as 'manual_adjustment' | 'prize_redemption')
+          }
+          size="small"
+          sx={{ width: 200 }}
+          SelectProps={{ native: true }}
+        >
+          <option value="manual_adjustment">Manual Adjustment</option>
+          <option value="prize_redemption">Prize Redemption</option>
+        </TextField>
+        <TextField
+          label="Reason"
+          value={reason}
+          onChange={(e) => setReason(e.target.value)}
+          size="small"
+          sx={{ flex: 1, minWidth: 180 }}
+        />
+        <Button
+          variant="contained"
+          onClick={handleSubmit}
+          disabled={isAdjusting || !delta || !reason.trim()}
+          size="small"
+          sx={{ height: 40 }}
+        >
+          Apply
+        </Button>
+      </Box>
+    </Box>
+  )
+}
 
 const PAGE_SIZE = 25
 
@@ -203,15 +325,18 @@ const UsersTable = (props: Props) => {
         >
           <Box component="div" sx={{ pb: '1.5rem' }}>
             {applicationData && (
-              <FormReview
-                user={applicationData}
-                application={{
-                  ...applicationData.application,
-                  resume_file_name: applicationData.resume_file_name,
-                  resume_link: applicationData.resume_link,
-                }}
-                hideDisclaimer
-              />
+              <>
+                <FormReview
+                  user={applicationData}
+                  application={{
+                    ...applicationData.application,
+                    resume_file_name: applicationData.resume_file_name,
+                    resume_link: applicationData.resume_link,
+                  }}
+                  hideDisclaimer
+                />
+                <PointsSection discordId={applicationData.discord_id} />
+              </>
             )}
           </Box>
         </Modal>
