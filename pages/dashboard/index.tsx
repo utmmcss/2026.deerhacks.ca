@@ -1,13 +1,16 @@
 import Head from 'next/head'
+import NextLink from 'next/link'
 
 import Alert from '@mui/material/Alert'
 import Box from '@mui/material/Box'
+import Button from '@mui/material/Button'
 import Container from '@mui/material/Container'
 import Fade from '@mui/material/Fade'
 import Grid from '@mui/material/Grid'
 
 import Starfield from '@/components/Celestial/Starfield'
 import TileChecklist from '@/components/Dashboard/TileChecklist'
+import TilePoints from '@/components/Dashboard/TilePoints'
 import TileDevpost from '@/components/Dashboard/TileDevpost'
 import TileHackerPack from '@/components/Dashboard/TileHackerPack'
 import TileInstagram from '@/components/Dashboard/TileInstagram'
@@ -34,7 +37,9 @@ const Dashboard = () => {
 
   // Fetch application data to get archetype (only for completed applications)
   const shouldFetchArchetype =
-    authenticated && user?.status && !['pending', 'registering'].includes(user.status)
+    authenticated &&
+    user?.status &&
+    !['pending', 'registering', 'admin', 'moderator', 'volunteer', 'guest'].includes(user.status)
 
   const { data: applicationData } = useApplicationGet({
     enabled: !!shouldFetchArchetype,
@@ -137,6 +142,19 @@ const Dashboard = () => {
                         <TileUsersTable />
                       </Grid>
                     )}
+                    {['admin', 'moderator'].includes(user.status) && (
+                      <Grid item xs={12} md="auto">
+                        <Button
+                          component={NextLink}
+                          href="/dashboard/workshop-qr"
+                          variant="outlined"
+                          fullWidth
+                          sx={{ height: '100%', minHeight: 56 }}
+                        >
+                          Workshop QR Display
+                        </Button>
+                      </Grid>
+                    )}
                   </Grid>
                 )}
                 <Grid container spacing={2}>
@@ -151,6 +169,13 @@ const Dashboard = () => {
                     <Grid item xs={12}>
                       <TileStatus status={user.status} />
                     </Grid>
+                    {['accepted', 'attended', 'admin', 'moderator', 'volunteer', 'guest'].includes(
+                      user.status
+                    ) && (
+                      <Grid item xs={12}>
+                        <TilePoints />
+                      </Grid>
+                    )}
                     <Grid item xs={6}>
                       <TileChecklist />
                     </Grid>

@@ -30,6 +30,8 @@ export type RespEvent = {
     host: EventHosts
     presenter?: string | null
     type: EventTypes
+    points_value?: number
+    qr_active?: boolean
   }
 }
 
@@ -45,6 +47,8 @@ export type Event = {
     host: EventHosts
     presenter?: string | null
     type: EventTypes
+    points_value?: number
+    qr_active?: boolean
     /* used only when displaying event details in modal */
     actualEventTimes?: {
       startTime: Date

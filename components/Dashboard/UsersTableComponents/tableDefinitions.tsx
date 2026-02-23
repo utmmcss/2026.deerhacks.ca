@@ -1,8 +1,10 @@
 import { Dispatch, ReactNode, SetStateAction } from 'react'
 
 import AssignmentIcon from '@mui/icons-material/Assignment'
+import EditIcon from '@mui/icons-material/Edit'
 import Box from '@mui/material/Box'
 import Tooltip from '@mui/material/Tooltip'
+import Typography from '@mui/material/Typography'
 import {
   GridActionsCellItem,
   GridCellParams,
@@ -66,6 +68,7 @@ type GetColumnsProps = {
   setUsers: (users: UserListData[]) => void
   setUpdateReq: Dispatch<SetStateAction<UserUpdateBatchReq>>
   setApplicationData: (data: UserListData) => void
+  setPointsData: (data: UserListData) => void
   originalData: UserListData[]
   userStatus: UserStatus
   statusUpdateToggle: boolean
@@ -77,6 +80,7 @@ export const getColumns = (props: GetColumnsProps): GridColDef[] => {
     setUsers,
     setUpdateReq,
     setApplicationData,
+    setPointsData,
     originalData,
     userStatus,
     statusUpdateToggle,
@@ -273,6 +277,32 @@ export const getColumns = (props: GetColumnsProps): GridColDef[] => {
             </Tooltip>
           )}
         </>
+      ),
+    },
+    {
+      field: 'total_points',
+      headerName: 'Points',
+      description: 'Workshop Points Balance',
+      filterable: false,
+      sortable: false,
+      flex: 0.75,
+      minWidth: 110,
+      renderCell: (params: GridRenderCellParams) => (
+        <Box component="div" display="flex" alignItems="center" height="100%" width="100%" gap={0.5}>
+          <Typography variant="body2" sx={{ flexShrink: 0 }}>
+            {params.row.total_points ?? 0} pts
+          </Typography>
+          <Tooltip title="Adjust Points">
+            <span>
+              <GridActionsCellItem
+                icon={<EditIcon sx={{ fontSize: 18 }} />}
+                onClick={() => setPointsData(params.row as UserListData)}
+                label="Adjust Points"
+                style={{ borderRadius: '4px' }}
+              />
+            </span>
+          </Tooltip>
+        </Box>
       ),
     },
   ]

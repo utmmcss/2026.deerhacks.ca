@@ -4,8 +4,11 @@ import { useRouter } from 'next/router'
 import { Dispatch, SetStateAction, Suspense, useEffect, useState } from 'react'
 
 import Box from '@mui/material/Box'
+import Button from '@mui/material/Button'
 import Container from '@mui/material/Container'
+import Divider from '@mui/material/Divider'
 import Fade from '@mui/material/Fade'
+import TextField from '@mui/material/TextField'
 import Typography from '@mui/material/Typography'
 import {
   DataGrid,
@@ -21,10 +24,13 @@ import TableFooter from '@/components/Dashboard/UsersTableComponents/TableFooter
 import TableToolbar from '@/components/Dashboard/UsersTableComponents/TableToolbar'
 import BackButton from '@/components/Shared/BackButton'
 import FullPageSpinner from '@/components/Shared/FullPageSpinner'
+import { useAPI } from '@/contexts/API'
 import { useAuth } from '@/contexts/Auth'
 import { useFeatureToggle } from '@/contexts/FeatureToggle'
 import { useUserList } from '@/hooks/User/useUserList'
 import { useUserUpdateBatch } from '@/hooks/User/useUserUpdateBatch'
+import { useAdminPointsAdjust } from '@/hooks/Workshop/useAdminPointsAdjust'
+import { useUserPoints } from '@/hooks/Workshop/useUserPoints'
 import Error404Page from '@/pages/404'
 import Error500Page from '@/pages/500'
 import {
@@ -34,6 +40,129 @@ import {
   userStatuses,
   UserUpdateBatchReq,
 } from '@/types/User'
+
+type PointsSectionProps = { discordId: string }
+
+const PointsSection = ({ discordId }: PointsSectionProps) => {
+  const api = useAPI()
+  const { data, isLoading } = useUserPoints({ enabled: true, discordId })
+  const { mutate: adjustPoints, isLoading: isAdjusting } = useAdminPointsAdjust()
+
+  const [deductAmount, setDeductAmount] = useState('')
+  const [adjType, setAdjType] = useState<'manual_adjustment' | 'prize_redemption'>(
+    'manual_adjustment'
+  )
+  const [reason, setReason] = useState('')
+
+  const handleSubmit = () => {
+    const amount = parseInt(deductAmount)
+    if (isNaN(amount) || amount <= 0 || !reason.trim()) return
+    adjustPoints(
+      { discord_id: discordId, delta: -amount, adjustment_type: adjType, reason: reason.trim() },
+      {
+        // Note: hook-level onSuccess (shows toast) also fires — TanStack Query v4 merges both.
+        onSuccess: () => {
+          setDeductAmount('')
+          setReason('')
+          api.queryClient.invalidateQueries({ queryKey: ['userPointsGet'] })
+          api.queryClient.invalidateQueries({ queryKey: ['userList'] })
+        },
+      }
+    )
+  }
+
+  return (
+    <Box component="div" mt={2}>
+      <Divider sx={{ my: 2 }} />
+      <Typography variant="h6" mb={1}>
+        Workshop Points
+      </Typography>
+      {isLoading ? (
+        <Typography color="text.secondary" variant="body2">
+          Loading…
+        </Typography>
+      ) : (
+        <>
+          <Typography variant="h4" fontWeight="bold" color="primary.main" mb={1}>
+            {data?.total_points ?? 0} pts
+          </Typography>
+          {data?.redemptions && data.redemptions.length > 0 && (
+            <Box component="div" mb={2}>
+              <Typography variant="subtitle2" mb={0.5}>
+                Redemptions
+              </Typography>
+              {data.redemptions.map((r, i) => (
+                <Typography key={i} variant="body2" color="text.secondary">
+                  +{r.points_awarded} — {r.event_title} (
+                  {new Date(r.redeemed_at).toLocaleString()})
+                </Typography>
+              ))}
+            </Box>
+          )}
+          {data?.adjustments && data.adjustments.length > 0 && (
+            <Box component="div" mb={2}>
+              <Typography variant="subtitle2" mb={0.5}>
+                Adjustments
+              </Typography>
+              {data.adjustments.map((a, i) => (
+                <Typography key={i} variant="body2" color="text.secondary">
+                  {a.delta > 0 ? '+' : ''}
+                  {a.delta} [{a.adjustment_type}] — {a.reason} (
+                  {new Date(a.adjusted_at).toLocaleString()})
+                </Typography>
+              ))}
+            </Box>
+          )}
+        </>
+      )}
+      <Divider sx={{ my: 2 }} />
+      <Typography variant="subtitle1" mb={1}>
+        Deduct Points
+      </Typography>
+      <Box component="div" display="flex" gap={1} flexWrap="wrap" alignItems="flex-start">
+        <TextField
+          label="Points to Deduct"
+          value={deductAmount}
+          onChange={(e) => setDeductAmount(e.target.value)}
+          size="small"
+          sx={{ width: 160 }}
+          type="number"
+          inputProps={{ min: 1, step: 1 }}
+        />
+        <TextField
+          select
+          label="Type"
+          value={adjType}
+          onChange={(e) =>
+            setAdjType(e.target.value as 'manual_adjustment' | 'prize_redemption')
+          }
+          size="small"
+          sx={{ width: 200 }}
+          SelectProps={{ native: true }}
+        >
+          <option value="manual_adjustment">Manual Adjustment</option>
+          <option value="prize_redemption">Prize Redemption</option>
+        </TextField>
+        <TextField
+          label="Reason"
+          value={reason}
+          onChange={(e) => setReason(e.target.value)}
+          size="small"
+          sx={{ flex: 1, minWidth: 180 }}
+        />
+        <Button
+          variant="contained"
+          onClick={handleSubmit}
+          disabled={isAdjusting || !deductAmount || parseInt(deductAmount) <= 0 || !reason.trim()}
+          size="small"
+          sx={{ height: 40 }}
+        >
+          Apply
+        </Button>
+      </Box>
+    </Box>
+  )
+}
 
 const PAGE_SIZE = 25
 
@@ -92,6 +221,7 @@ const UsersTable = (props: Props) => {
     internal_status: toggles.internalFields,
     internal_notes: toggles.internalFields,
     application: true,
+    total_points: true,
   })
 
   useEffect(() => {
@@ -109,6 +239,13 @@ const UsersTable = (props: Props) => {
   const handleOpenApplication = (data: UserListData) => {
     setApplicationData(data)
     setOpenApplication(true)
+  }
+
+  const [pointsData, setPointsData] = useState<UserListData>()
+  const [openPoints, setOpenPoints] = useState(false)
+  const handleOpenPoints = (data: UserListData) => {
+    setPointsData(data)
+    setOpenPoints(true)
   }
 
   const hasUnsavedChanges = updateReq.users.length > 0
@@ -153,6 +290,7 @@ const UsersTable = (props: Props) => {
           setUsers,
           setUpdateReq,
           setApplicationData: handleOpenApplication,
+          setPointsData: handleOpenPoints,
           originalData,
           userStatus,
           statusUpdateToggle: toggles.statusUpdates || userStatus === 'admin',
@@ -203,16 +341,32 @@ const UsersTable = (props: Props) => {
         >
           <Box component="div" sx={{ pb: '1.5rem' }}>
             {applicationData && (
-              <FormReview
-                user={applicationData}
-                application={{
-                  ...applicationData.application,
-                  resume_file_name: applicationData.resume_file_name,
-                  resume_link: applicationData.resume_link,
-                }}
-                hideDisclaimer
-              />
+              <>
+                <FormReview
+                  user={applicationData}
+                  application={{
+                    ...applicationData.application,
+                    resume_file_name: applicationData.resume_file_name,
+                    resume_link: applicationData.resume_link,
+                  }}
+                  hideDisclaimer
+                />
+              </>
             )}
+          </Box>
+        </Modal>
+        <Modal
+          open={openPoints}
+          title={`Points — ${pointsData?.first_name ?? ''} ${pointsData?.last_name ?? ''}`}
+          onClose={() => setOpenPoints(false)}
+          TransitionProps={{
+            onExited: () => setPointsData(undefined),
+          }}
+          keepMounted
+          maxWidth="sm"
+        >
+          <Box component="div" sx={{ pb: '1.5rem' }}>
+            {pointsData && <PointsSection discordId={pointsData.discord_id} />}
           </Box>
         </Modal>
       </Suspense>

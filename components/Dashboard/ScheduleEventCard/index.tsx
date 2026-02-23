@@ -35,6 +35,7 @@ type FormData = {
   location: string
   start_time: string
   end_time: string
+  points_value: string
   important: boolean
   host: EventHosts
   presenter: string
@@ -64,6 +65,7 @@ const ScheduleEventCard = (props: Props) => {
     location: event?.attributes.location ?? '',
     start_time: event?.attributes.startTime ? formatDateTimeLocal(event.attributes.startTime) : '',
     end_time: event?.attributes.endTime ? formatDateTimeLocal(event.attributes.endTime) : '',
+    points_value: String(event?.attributes.points_value ?? ''),
     important: event?.attributes.important ?? false,
     host: event?.attributes.host ?? 'deerhacks',
     presenter: event?.attributes.presenter ?? '',
@@ -75,12 +77,22 @@ const ScheduleEventCard = (props: Props) => {
   }
 
   const handleSave = () => {
+    const trimmedPoints = formData.points_value.trim()
+    const parsedPoints = trimmedPoints === '' ? undefined : Number(trimmedPoints)
+    if (
+      parsedPoints !== undefined &&
+      (!Number.isInteger(parsedPoints) || parsedPoints < 0)
+    ) {
+      return
+    }
+
     const dataToSave: EventCreateReq = {
       title: formData.title,
       description: formData.description,
       location: formData.location || undefined,
       start_time: formatDateTimeForApi(formData.start_time),
       end_time: formData.end_time ? formatDateTimeForApi(formData.end_time) : undefined,
+      points_value: parsedPoints,
       important: formData.important,
       host: formData.host,
       presenter: formData.presenter || undefined,
@@ -164,6 +176,15 @@ const ScheduleEventCard = (props: Props) => {
                 fullWidth
               />
             </Box>
+            <TextField
+              label="Points Value"
+              type="number"
+              value={formData.points_value}
+              onChange={(e) => handleChange('points_value', e.target.value)}
+              fullWidth
+              inputProps={{ min: 0, step: 1 }}
+              helperText="Set > 0 for workshop QR eligibility. Leave blank for 0."
+            />
             <Box component="div" display="flex" gap={2}>
               <TextField
                 select
@@ -254,6 +275,9 @@ const ScheduleEventCard = (props: Props) => {
         </Box>
         <Box component="div" display="flex" alignItems="center" gap={1}>
           <Chip label={event?.attributes.host} size="small" />
+          {(event?.attributes.points_value ?? 0) > 0 && (
+            <Chip label={`${event?.attributes.points_value} pts`} color="success" size="small" />
+          )}
           <IconButton
             onClick={(e) => {
               e.stopPropagation()

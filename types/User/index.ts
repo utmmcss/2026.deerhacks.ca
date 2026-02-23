@@ -123,4 +123,5 @@ export type UserListParams = {
 export type UserListData = UserFullData &
   Pick<ResumeUpdateResp, 'resume_file_name' | 'resume_link'> & {
     application: Omit<Application, 'resume_file_name' | 'resume_link'>
+    total_points: number
   }

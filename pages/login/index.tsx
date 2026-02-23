@@ -40,7 +40,12 @@ const Login = () => {
       window.removeEventListener('storage', handleStorage)
       // Invalidation in popup window does not affect main window
       api.queryClient.invalidateQueries({ queryKey: ['userGet'] })
-      router.push('/dashboard')
+      const redirect = searchParams.get('redirect')
+      const safeRedirect =
+        redirect && redirect.startsWith('/') && !redirect.startsWith('//')
+          ? redirect
+          : '/dashboard'
+      router.push(safeRedirect)
     }
   }
 
@@ -52,7 +57,12 @@ const Login = () => {
 
   useEffect(() => {
     if (loading || !authenticated) return
-    router.replace('/dashboard')
+    const redirect = searchParams.get('redirect')
+    const safeRedirect =
+      redirect && redirect.startsWith('/') && !redirect.startsWith('//')
+        ? redirect
+        : '/dashboard'
+    router.replace(safeRedirect)
   }, [loading, authenticated, router, toggles.dashboard])
 
   if (!toggles.dashboard) return <Error404Page />
