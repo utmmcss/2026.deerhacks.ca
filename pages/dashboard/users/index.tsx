@@ -72,7 +72,7 @@ const PointsSection = ({ discordId }: PointsSectionProps) => {
   }
 
   return (
-    <Box mt={2}>
+    <Box component="div" mt={2}>
       <Divider sx={{ my: 2 }} />
       <Typography variant="h6" mb={1}>
         Workshop Points
@@ -87,7 +87,7 @@ const PointsSection = ({ discordId }: PointsSectionProps) => {
             {data?.total_points ?? 0} pts
           </Typography>
           {data?.redemptions && data.redemptions.length > 0 && (
-            <Box mb={2}>
+            <Box component="div" mb={2}>
               <Typography variant="subtitle2" mb={0.5}>
                 Redemptions
               </Typography>
@@ -100,7 +100,7 @@ const PointsSection = ({ discordId }: PointsSectionProps) => {
             </Box>
           )}
           {data?.adjustments && data.adjustments.length > 0 && (
-            <Box mb={2}>
+            <Box component="div" mb={2}>
               <Typography variant="subtitle2" mb={0.5}>
                 Adjustments
               </Typography>
@@ -119,7 +119,7 @@ const PointsSection = ({ discordId }: PointsSectionProps) => {
       <Typography variant="subtitle1" mb={1}>
         Deduct Points
       </Typography>
-      <Box display="flex" gap={1} flexWrap="wrap" alignItems="flex-start">
+      <Box component="div" display="flex" gap={1} flexWrap="wrap" alignItems="flex-start">
         <TextField
           label="Points to Deduct"
           value={deductAmount}
