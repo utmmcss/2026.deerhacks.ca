@@ -110,6 +110,11 @@ const Menu = (props: MenuProps) => {
           </Button>
         </Box>
         <Box component="div" data-aos="fade" data-aos-delay="1250" data-aos-duration="1250">
+          <Button href="/schedule" component={NextLink} sx={{ p: '0.5rem' }} onClick={afterClick}>
+            Schedule
+          </Button>
+        </Box>
+        <Box component="div" data-aos="fade" data-aos-delay="1250" data-aos-duration="1250">
           <Button sx={{ p: '0.5rem' }} onClick={() => handleClick('#faq')}>
             FAQ
           </Button>

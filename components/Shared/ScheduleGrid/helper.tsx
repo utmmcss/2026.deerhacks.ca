@@ -255,8 +255,10 @@ const fillGrid = (curr: ScheduleProps, maxCols: number) => {
       for (let hour_k = startHour; hour_k < (endsPastHour ? endHour + 1 : endHour); hour_k++) {
         var beforeCurrEvent = true
         var numEvents = 1
-        // for each event that starts in this hour
-        for (const column in Object.keys(curr.gridOccupancy[hour_k])) {
+        // for each event in this hour
+        for (const column of Object.keys(curr.gridOccupancy[hour_k]).map((key) =>
+          parseInt(key, 10)
+        )) {
           const otherEventId = curr.gridOccupancy[hour_k][column]
           // if event in this column is not the current event
           if (otherEventId !== event.id) {
@@ -290,10 +292,14 @@ const fillGrid = (curr: ScheduleProps, maxCols: number) => {
       if (extendAmount > 0 && longestEvent) {
         // for every hour this event lasts for,
         for (let hour_k = startHour; hour_k < (endsPastHour ? endHour + 1 : endHour); hour_k++) {
+          const maxOccupiedColumn = Math.max(
+            -1,
+            ...Object.keys(curr.gridOccupancy[hour_k]).map((key) => parseInt(key, 10))
+          )
           // if there's events occupying the next columns, move each one stretchAmount columns to the right
           // start shifting from last column so we don't overwrite anything
           for (
-            let column_l = Object.keys(curr.gridOccupancy[hour_k]).length - 1;
+            let column_l = maxOccupiedColumn;
             column_l + extendAmount > currCol;
             column_l--
           ) {

@@ -115,13 +115,21 @@ const ScheduleGrid = (props: ScheduleProps) => {
 
                 var colStart = -1
                 var colEnd = 1
-                for (const key in Object.keys(currentOccupancy)) {
-                  if (currentOccupancy[key] === event.id) {
+                const occupiedColumns = Object.keys(currentOccupancy)
+                  .map((key) => parseInt(key, 10))
+                  .sort((a, b) => a - b)
+
+                for (const column of occupiedColumns) {
+                  if (currentOccupancy[column] === event.id) {
                     if (colStart === -1) {
-                      colStart = parseInt(key) + 1
+                      colStart = column + 1
                     }
-                    colEnd = parseInt(key) + 2
+                    colEnd = column + 2
                   }
+                }
+                if (colStart === -1) {
+                  colStart = 1
+                  colEnd = 2
                 }
 
                 return (
