@@ -3,7 +3,7 @@ import dynamic from 'next/dynamic'
 import AboutSection from '@/components/Celestial/AboutSection'
 import Footer from '@/components/Celestial/Footer'
 import HeroSection from '@/components/Celestial/HeroSection'
-import Navbar from '@/components/Celestial/Navbar'
+import Navbar from '@/components/Shared/Navbar'
 import Starfield from '@/components/Celestial/Starfield'
 
 // Lazy load non-critical sections that are below the fold

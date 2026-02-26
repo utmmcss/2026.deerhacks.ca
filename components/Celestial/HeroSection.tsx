@@ -18,7 +18,7 @@ const HeroSection = () => {
   const secondaryClassName = getButtonClassName('constellation', 'xl')
 
   return (
-    <section className="relative min-h-screen flex flex-col overflow-hidden">
+    <section className="relative min-h-[calc(100vh-5rem)] flex flex-col overflow-hidden">
       {/* Background gradients */}
       <div className="absolute inset-0 z-0" style={{ background: 'var(--gradient-hero)' }} />
 
@@ -38,7 +38,7 @@ const HeroSection = () => {
         />
       </div>
 
-      <div className="container mx-auto px-4 sm:px-6 relative z-10 flex-grow flex flex-col pt-24 pb-12">
+      <div className="container mx-auto px-4 sm:px-6 relative z-10 flex-grow flex flex-col pt-4 pb-12">
         <div className="flex-grow flex flex-col items-center justify-center text-center max-w-4xl mx-auto">
           {/* Deer Constellation - Made more prominent */}
           <div

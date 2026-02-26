@@ -27,7 +27,12 @@ type Hour = {
 export const parseEvents = (events: RespEvent[]): ParsedEventData => {
   const parsedEvents: ParsedEventData = {}
 
-  for (const event of events) {
+  const sortedEvents = [...events].sort(
+    (a, b) =>
+      new Date(a.attributes.startTime).getTime() -
+      new Date(b.attributes.startTime).getTime()
+  )
+  for (const event of sortedEvents) {
     const startTime = new Date(event.attributes.startTime)
     const endTime = new Date(event.attributes.endTime ?? '')
 
@@ -153,10 +158,18 @@ const newProps = (newEvent: Event, curr?: ScheduleProps) => {
     endHour = 24
   }
 
-  // move to next column if spot is already occupied
-  // (only need to worry about the first hour, since we fill in occupancy in order of event time at this point)
+  // find the first column that is free for every hour this event spans
+  const eventEndHour = endMinuteOffset === 0 ? endHour : endHour + 1
   var columnPos = 0
-  while (curr.gridOccupancy[hour][columnPos]) {
+  while (true) {
+    let colFree = true
+    for (let h = hour; h < eventEndHour; h++) {
+      if (curr.gridOccupancy[h][columnPos]) {
+        colFree = false
+        break
+      }
+    }
+    if (colFree) break
     columnPos += 1
   }
 
@@ -195,11 +208,7 @@ const fillGrid = (curr: ScheduleProps, maxCols: number) => {
         ) ?? '0'
       )
 
-      // all event ids that start in this hour
-      const eventIDsThisHour = Object.values(curr.hours[hour_i].eventsStarting).map((e) => e.id)
-
       // find the number of free columns to the right of the current column
-      // to simplify logic, assume there's no columns left if any event starts midway the current one, otherwise, we would have to change the last-event-in-hour logic
       var colsLeft = maxCols
       // for every hour this event lasts for
       for (let hour_k = startHour; hour_k < (endsPastHour ? endHour + 1 : endHour); hour_k++) {
@@ -207,16 +216,10 @@ const fillGrid = (curr: ScheduleProps, maxCols: number) => {
         // for every column to the right of the current column
         for (let column_l = currCol + 1; column_l < maxCols; column_l++) {
           if (curr.gridOccupancy[hour_k][column_l]) {
-            // don't add to spaceLeft if there's an event in the next column,
-            // BUT if the event in the next column starts in the same hour, continue counting
-            if (!eventIDsThisHour.includes(curr.gridOccupancy[hour_k][column_l])) {
-              // otherwise, we've reached the end of free space
-              break
-            }
-          } else {
-            // no event in next column
-            spaceLeft += 1
+            // column is occupied by any event — stop counting free space
+            break
           }
+          spaceLeft += 1
         }
         // need the smallest number of free columns to the right of the current column
         if (spaceLeft < colsLeft) {

@@ -5,7 +5,7 @@ import ChevronLeftRoundedIcon from '@mui/icons-material/ChevronLeftRounded'
 import Box from '@mui/material/Box'
 import Button from '@mui/material/Button'
 
-import Navbar from '@/components/Celestial/Navbar'
+import Navbar from '@/components/Shared/Navbar'
 
 type Props = {
   href?: string

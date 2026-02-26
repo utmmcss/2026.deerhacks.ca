@@ -10,12 +10,12 @@ import Grid from '@mui/material/Grid'
 
 import Starfield from '@/components/Celestial/Starfield'
 import TileChecklist from '@/components/Dashboard/TileChecklist'
-import TilePoints from '@/components/Dashboard/TilePoints'
 import TileDevpost from '@/components/Dashboard/TileDevpost'
 import TileHackerPack from '@/components/Dashboard/TileHackerPack'
 import TileInstagram from '@/components/Dashboard/TileInstagram'
 import TileLinkedIn from '@/components/Dashboard/TileLinkedIn'
 import TileMentorForm from '@/components/Dashboard/TileMentorForm'
+import TilePoints from '@/components/Dashboard/TilePoints'
 import TileRegistration from '@/components/Dashboard/TileRegistration'
 import TileScanner from '@/components/Dashboard/TileScanner'
 import TileSchedule from '@/components/Dashboard/TileSchedule'
@@ -74,9 +74,10 @@ const Dashboard = () => {
               maxWidth="xl"
               sx={{
                 minHeight: '100vh',
+                display: 'flex',
                 flexDirection: 'column',
-                justifyContent: 'space-between',
                 alignItems: 'stretch',
+                gap: '1rem',
                 py: '2rem',
                 position: 'relative',
                 zIndex: 1,
@@ -207,7 +208,6 @@ const Dashboard = () => {
                   </Grid>
                 </Grid>
               </Box>
-              <span />
             </Container>
           </Box>
         </Fade>

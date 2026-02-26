@@ -7,16 +7,17 @@ import { getButtonClassName } from './buttonStyles'
 const currentSponsors = [
   { name: 'Featherless AI', logo: '/events/featherless-full-original.svg', width: 220, height: 40 },
   { name: 'Deloitte', logo: '/events/deloitte.png', width: 200, height: 50 },
+  { name: 'IMI UTM', logo: '/events/imi.jpg', width: 220, height: 60 },
+  { name: 'BIG Data AI Hub', logo: '/events/imibdh.svg', width: 220, height: 48 },
+  { name: 'UofT Mississauga', logo: '/events/utm.png', width: 142, height: 60 },
 ]
 
 const previousSponsors = [
   { name: 'Uber' },
-  { name: 'University of Toronto' },
   { name: 'iCube UTM' },
   { name: 'Major League Hacking' },
   { name: 'AWS' },
   { name: 'echo3D' },
-  { name: 'BIGDataAIHub @ IMI' },
   { name: 'StandOut Stickers' },
   { name: 'Silver Spoon' },
   { name: 'Thirstea' },

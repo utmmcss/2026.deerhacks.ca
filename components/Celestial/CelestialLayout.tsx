@@ -1,7 +1,7 @@
 import Head from 'next/head'
 import { ReactNode } from 'react'
 
-import CelestialNavbar from './CelestialNavbar'
+import Navbar from '@/components/Shared/Navbar'
 import Footer from './Footer'
 import Starfield from './Starfield'
 
@@ -35,9 +35,9 @@ const CelestialLayout = ({ children, title, showFooter = true }: Props) => {
           </div>
         </div>
 
-        <CelestialNavbar />
+        <Navbar />
 
-        <div className="relative z-10 pt-24 pb-16 min-h-screen">
+        <div className="relative z-10 pb-16 min-h-screen">
           {children}
         </div>
 
