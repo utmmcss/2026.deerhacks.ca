@@ -93,7 +93,7 @@ export const getColumns = (props: GetColumnsProps): GridColDef[] => {
   const updateValue = (
     key: 'status' | 'internal_status' | 'internal_notes',
     newValue: string,
-    params: GridRenderCellParams
+    params: GridRenderCellParams,
   ) => {
     params.row[key] = newValue
     const newUsers = users.slice()
@@ -132,7 +132,7 @@ export const getColumns = (props: GetColumnsProps): GridColDef[] => {
       headerName: 'First Name',
       description: 'First Name',
       filterable: false,
-      sortable: false,
+      sortable: true,
       flex: 1,
       minWidth: 100,
       renderCell: (params: GridRenderCellParams) => TableCellValue(params.row.first_name),
@@ -142,7 +142,7 @@ export const getColumns = (props: GetColumnsProps): GridColDef[] => {
       headerName: 'Last Name',
       description: 'Last Name',
       filterable: false,
-      sortable: false,
+      sortable: true,
       flex: 1,
       minWidth: 100,
       renderCell: (params: GridRenderCellParams) => TableCellValue(params.row.last_name),
@@ -152,7 +152,7 @@ export const getColumns = (props: GetColumnsProps): GridColDef[] => {
       headerName: 'Username',
       description: 'Discord Username',
       filterable: false,
-      sortable: false,
+      sortable: true,
       flex: 1,
       minWidth: 100,
       renderCell: (params: GridRenderCellParams) => TableCellValue(params.row.id),
@@ -162,7 +162,7 @@ export const getColumns = (props: GetColumnsProps): GridColDef[] => {
       headerName: 'Email',
       description: 'Email',
       filterable: false,
-      sortable: false,
+      sortable: true,
       flex: 1.5,
       minWidth: 150,
       renderCell: (params: GridRenderCellParams) => TableCellValue(params.row.email),
@@ -172,7 +172,7 @@ export const getColumns = (props: GetColumnsProps): GridColDef[] => {
       headerName: 'Status',
       description: 'User Status',
       filterable: false,
-      sortable: false,
+      sortable: true,
       flex: 1,
       minWidth: 100,
       cellClassName: (params: GridCellParams) => {
@@ -187,7 +187,7 @@ export const getColumns = (props: GetColumnsProps): GridColDef[] => {
             disabled={!statusUpdateToggle || getDisabledForModerator(params.row.status)}
             onChange={(val) => updateValue('status', val, params)}
           />,
-          params.row.status
+          params.row.status,
         ),
     },
     {
@@ -214,7 +214,7 @@ export const getColumns = (props: GetColumnsProps): GridColDef[] => {
             disabled={getDisabledForModerator(params.row.status)}
             isClearable
           />,
-          params.row.internal_status
+          params.row.internal_status,
         ),
     },
     {
@@ -288,7 +288,14 @@ export const getColumns = (props: GetColumnsProps): GridColDef[] => {
       flex: 0.75,
       minWidth: 110,
       renderCell: (params: GridRenderCellParams) => (
-        <Box component="div" display="flex" alignItems="center" height="100%" width="100%" gap={0.5}>
+        <Box
+          component="div"
+          display="flex"
+          alignItems="center"
+          height="100%"
+          width="100%"
+          gap={0.5}
+        >
           <Typography variant="body2" sx={{ flexShrink: 0 }}>
             {params.row.total_points ?? 0} pts
           </Typography>
