@@ -31,7 +31,7 @@ const Callback = () => {
       return
     }
 
-    userLogin({ token })
+    userLogin({ token: token! })
   }, [userLogin, token, error, toggles.dashboard, router])
 
   return (
