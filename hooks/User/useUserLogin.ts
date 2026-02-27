@@ -11,6 +11,8 @@ export const useUserLogin = () => {
     onSuccess: () => {
       localStorage.setItem('deerhacks-last-login', Date.now().toString())
       window.close()
+      // Fallback: if window.close() is blocked (new tab instead of popup), redirect directly
+      router.replace('/dashboard')
     },
     onError: (err) => {
       if ((err as APIError).apiError.status == 403) {
