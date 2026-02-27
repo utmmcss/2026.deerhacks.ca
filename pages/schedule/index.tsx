@@ -120,6 +120,7 @@ const SchedulePage = () => {
                 onChange={(_, value) => setSelectedDay(value)}
                 variant="scrollable"
                 scrollButtons="auto"
+                allowScrollButtonsMobile
               >
                 {days.map((day) => (
                   <Tab key={day} label={formatDayLabel(day)} value={day} />
