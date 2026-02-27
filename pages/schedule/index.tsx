@@ -6,13 +6,17 @@ import Container from '@mui/material/Container'
 import Tab from '@mui/material/Tab'
 import Tabs from '@mui/material/Tabs'
 import Typography from '@mui/material/Typography'
+import useMediaQuery from '@mui/material/useMediaQuery'
 
 import CelestialLayout from '@/components/Celestial/CelestialLayout'
 import ScheduleGrid from '@/components/Shared/ScheduleGrid'
 import { useEventList } from '@/hooks/Event/useEventList'
 import { useSettings } from '@/hooks/Settings/useSettings'
+import theme from '@/styles/theme'
 
 const SchedulePage = () => {
+  const isMobile = useMediaQuery(theme.breakpoints.down('md'))
+
   const { data: settingsData, isLoading: settingsLoading, isError: settingsError } = useSettings({
     enabled: true,
   })
@@ -66,10 +70,10 @@ const SchedulePage = () => {
       }
     }
 
-    const timeLabelWidth = 44
-    const perColumnMinWidth = 120
+    const timeLabelWidth = isMobile ? 34 : 44
+    const perColumnMinWidth = isMobile ? 100 : 120
     return Math.max(320, timeLabelWidth + maxColumns * perColumnMinWidth)
-  }, [parsedData, selectedDay])
+  }, [parsedData, selectedDay, isMobile])
 
   return (
     <CelestialLayout title="Schedule" showFooter={false}>
