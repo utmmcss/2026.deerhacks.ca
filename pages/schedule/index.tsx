@@ -51,6 +51,26 @@ const SchedulePage = () => {
       day: 'numeric',
     })
 
+  const selectedDayGridMinWidth = useMemo(() => {
+    if (!selectedDay || !parsedData[selectedDay]) {
+      return 320
+    }
+
+    const day = parsedData[selectedDay]
+    let maxColumns = 1
+
+    for (const hourOccupancy of Object.values(day.gridOccupancy)) {
+      const occupiedColumns = Object.keys(hourOccupancy).map((key) => parseInt(key, 10))
+      if (occupiedColumns.length > 0) {
+        maxColumns = Math.max(maxColumns, Math.max(...occupiedColumns) + 1)
+      }
+    }
+
+    const timeLabelWidth = 44
+    const perColumnMinWidth = 120
+    return Math.max(320, timeLabelWidth + maxColumns * perColumnMinWidth)
+  }, [parsedData, selectedDay])
+
   return (
     <CelestialLayout title="Schedule" showFooter={false}>
       <Container maxWidth="lg">
@@ -102,8 +122,15 @@ const SchedulePage = () => {
                 ))}
               </Tabs>
               {selectedDay && (
-                <Box component="div" sx={{ overflowX: 'auto' }}>
-                  <Box component="div" sx={{ minWidth: 720 }}>
+                <Box
+                  component="div"
+                  sx={{
+                    overflowX: 'auto',
+                    WebkitOverflowScrolling: 'touch',
+                    minWidth: 0,
+                  }}
+                >
+                  <Box component="div" sx={{ minWidth: `${selectedDayGridMinWidth}px` }}>
                     <ScheduleGrid {...parsedData[selectedDay]} />
                   </Box>
                 </Box>
