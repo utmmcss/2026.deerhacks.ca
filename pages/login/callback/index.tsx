@@ -22,20 +22,15 @@ const Callback = () => {
   useEffect(() => {
     // Workaround since React StrictMode runs twice in development
     if (initialized.current || !toggles.dashboard) return
+    initialized.current = true
+
     if (error) {
       router.replace('/login?context=auth')
       return
     }
     if (!token) return
-    const now = Date.now()
-    const lastAttempt = Number(localStorage.getItem('deerhacks-login-attempt') || 0)
-    if (now - lastAttempt < 60_000) {
-      router.replace('/login?context=busy')
-      return
-    }
-    localStorage.setItem('deerhacks-login-attempt', now.toString())
+
     userLogin({ token })
-    initialized.current = true
   }, [userLogin, token, error, toggles.dashboard, router])
 
   return (
