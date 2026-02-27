@@ -22,13 +22,14 @@ const Callback = () => {
   useEffect(() => {
     // Workaround since React StrictMode runs twice in development
     if (initialized.current || !toggles.dashboard) return
+    // Wait until URL params are available before locking initialized
+    if (!token && !error) return
     initialized.current = true
 
     if (error) {
       router.replace('/login?context=auth')
       return
     }
-    if (!token) return
 
     userLogin({ token })
   }, [userLogin, token, error, toggles.dashboard, router])
