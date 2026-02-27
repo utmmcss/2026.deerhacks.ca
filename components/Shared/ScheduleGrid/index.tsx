@@ -1,4 +1,4 @@
-import { Fragment, useState } from 'react'
+import { Fragment, useMemo, useState } from 'react'
 
 import Grid from '@mui/material/Grid'
 import Typography from '@mui/material/Typography'
@@ -41,6 +41,17 @@ const ScheduleGrid = (props: ScheduleProps) => {
     1 + // rows start at 1 (?)
     rowStartOffset -
     rowEndOffset
+
+  const maxColumns = useMemo(() => {
+    let max = 1
+    for (const hourOccupancy of Object.values(gridOccupancy)) {
+      const occupiedColumns = Object.keys(hourOccupancy).map((key) => parseInt(key, 10))
+      if (occupiedColumns.length > 0) {
+        max = Math.max(max, Math.max(...occupiedColumns) + 1)
+      }
+    }
+    return max
+  }, [gridOccupancy])
 
   return (
     <Grid display="flex" flexDirection="row" position="relative" columnGap="0.25rem">
@@ -91,7 +102,12 @@ const ScheduleGrid = (props: ScheduleProps) => {
         )}
       </Grid>
       {/* event cells */}
-      <Grid display="grid" gridTemplateRows={`repeat(${gridHeight}, 12px)`} width="100%">
+      <Grid
+        display="grid"
+        gridTemplateRows={`repeat(${gridHeight}, 12px)`}
+        gridTemplateColumns={`repeat(${maxColumns}, minmax(0, 1fr))`}
+        width="100%"
+      >
         {hours.map((hour, numHour) => {
           const currentOccupancy = gridOccupancy[numHour]
           return (
