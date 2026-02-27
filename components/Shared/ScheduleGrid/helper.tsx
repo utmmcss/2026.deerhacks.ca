@@ -316,6 +316,7 @@ const fillGrid = (curr: ScheduleProps, maxCols: number) => {
             } else if (curr.gridOccupancy[hour_k][column_l]) {
               const otherId = curr.gridOccupancy[hour_k][column_l]
               curr.gridOccupancy[hour_k][column_l + extendAmount] = otherId
+              delete curr.gridOccupancy[hour_k][column_l]
             }
           }
         }
