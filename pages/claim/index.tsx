@@ -123,10 +123,10 @@ const ClaimPage = () => {
           <Box component="div" sx={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 2, textAlign: 'center' }}>
             <ErrorOutlineIcon sx={{ fontSize: 72, color: 'error.main' }} />
             <Typography variant="h5" fontWeight="bold">
-              QR Code Expired
+              Invalid QR Code
             </Typography>
             <Typography color="text.secondary">
-              Ask the presenter to show the screen again, then scan the new code.
+              Please scan the code shown on screen.
             </Typography>
           </Box>
         )
