@@ -9,6 +9,8 @@ import Container from '@mui/material/Container'
 import Divider from '@mui/material/Divider'
 import Fade from '@mui/material/Fade'
 import TextField from '@mui/material/TextField'
+import ToggleButton from '@mui/material/ToggleButton'
+import ToggleButtonGroup from '@mui/material/ToggleButtonGroup'
 import Typography from '@mui/material/Typography'
 import {
   DataGrid,
@@ -48,21 +50,23 @@ const PointsSection = ({ discordId }: PointsSectionProps) => {
   const { data, isLoading } = useUserPoints({ enabled: true, discordId })
   const { mutate: adjustPoints, isLoading: isAdjusting } = useAdminPointsAdjust()
 
-  const [deductAmount, setDeductAmount] = useState('')
+  const [mode, setMode] = useState<'add' | 'deduct'>('deduct')
+  const [amount, setAmount] = useState('')
   const [adjType, setAdjType] = useState<'manual_adjustment' | 'prize_redemption'>(
     'manual_adjustment'
   )
   const [reason, setReason] = useState('')
 
   const handleSubmit = () => {
-    const amount = parseInt(deductAmount)
-    if (isNaN(amount) || amount <= 0 || !reason.trim()) return
+    const parsed = parseInt(amount)
+    if (isNaN(parsed) || parsed <= 0 || !reason.trim()) return
+    const delta = mode === 'add' ? parsed : -parsed
     adjustPoints(
-      { discord_id: discordId, delta: -amount, adjustment_type: adjType, reason: reason.trim() },
+      { discord_id: discordId, delta, adjustment_type: adjType, reason: reason.trim() },
       {
         // Note: hook-level onSuccess (shows toast) also fires — TanStack Query v4 merges both.
         onSuccess: () => {
-          setDeductAmount('')
+          setAmount('')
           setReason('')
           api.queryClient.invalidateQueries({ queryKey: ['userPointsGet'] })
           api.queryClient.invalidateQueries({ queryKey: ['userList'] })
@@ -116,14 +120,23 @@ const PointsSection = ({ discordId }: PointsSectionProps) => {
         </>
       )}
       <Divider sx={{ my: 2 }} />
-      <Typography variant="subtitle1" mb={1}>
-        Deduct Points
-      </Typography>
+      <Box component="div" display="flex" alignItems="center" gap={2} mb={1}>
+        <Typography variant="subtitle1">{mode === 'add' ? 'Add Points' : 'Deduct Points'}</Typography>
+        <ToggleButtonGroup
+          value={mode}
+          exclusive
+          onChange={(_, val) => val && setMode(val)}
+          size="small"
+        >
+          <ToggleButton value="add">Add</ToggleButton>
+          <ToggleButton value="deduct">Deduct</ToggleButton>
+        </ToggleButtonGroup>
+      </Box>
       <Box component="div" display="flex" gap={1} flexWrap="wrap" alignItems="flex-start">
         <TextField
-          label="Points to Deduct"
-          value={deductAmount}
-          onChange={(e) => setDeductAmount(e.target.value)}
+          label="Points"
+          value={amount}
+          onChange={(e) => setAmount(e.target.value)}
           size="small"
           sx={{ width: 160 }}
           type="number"
@@ -153,7 +166,7 @@ const PointsSection = ({ discordId }: PointsSectionProps) => {
         <Button
           variant="contained"
           onClick={handleSubmit}
-          disabled={isAdjusting || !deductAmount || parseInt(deductAmount) <= 0 || !reason.trim()}
+          disabled={isAdjusting || !amount || parseInt(amount) <= 0 || !reason.trim()}
           size="small"
           sx={{ height: 40 }}
         >
