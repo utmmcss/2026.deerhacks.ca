@@ -31,6 +31,8 @@ import {
 } from '@/types/Workshop'
 import {
   UserGetResp,
+  UserListIdsParams,
+  UserListIdsResp,
   UserListParams,
   UserListResp,
   UserLoginReq,
@@ -171,7 +173,7 @@ const users = (customFetch: CustomFetch) =>
         'DH_BE',
         `/user-list?full=${full}&page=${page}&statuses=${statuses?.join(
           ','
-        )}&internal_statuses=${internal_statuses?.join(',')}&search=${search}`
+        )}&internal_statuses=${internal_statuses?.join(',')}&search=${encodeURIComponent(search)}`
       )
       return res.data as UserListResp
     },
@@ -190,6 +192,15 @@ const users = (customFetch: CustomFetch) =>
     userLogout: async () => {
       const res = await customFetch('POST', 'DH_BE', '/user-logout')
       return res.data as {}
+    },
+    userListIds: async (params: UserListIdsParams) => {
+      const { statuses, internal_statuses, search } = params
+      const res = await customFetch(
+        'GET',
+        'DH_BE',
+        `/user-list-ids?statuses=${statuses?.join(',')}&internal_statuses=${internal_statuses?.join(',')}&search=${encodeURIComponent(search)}`
+      )
+      return res.data as UserListIdsResp
     },
   } as const)
 
