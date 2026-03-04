@@ -1,10 +1,11 @@
 import { useAPI } from '@/contexts/API'
 
-// Polls every 25s to keep QR fresh before the 30s window expires.
+// Token is a static HMAC(QR_SECRET, eventID) — it never changes for a given event.
+// staleTime: Infinity prevents background refetches; the query re-fires automatically
+// when the event selection changes (key change) or on event update (invalidateQueries).
 export const useAdminQRToken = (eventId: number | null) => {
   return useAPI().useQuery(['adminQRTokenGet', { id: eventId as number }], {
     enabled: eventId !== null,
-    refetchInterval: 570_000, // 9m30s — refresh before the 10-minute bucket expires
-    staleTime: 0,
+    staleTime: Infinity,
   })
 }

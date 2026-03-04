@@ -30,7 +30,6 @@ export type UserPointsResp = {
 
 export type QRTokenResp = {
   token: string
-  expires_in: number
 }
 
 export type RecentClaimant = {

@@ -1,5 +1,5 @@
 import Head from 'next/head'
-import { useEffect, useRef, useState } from 'react'
+import { useRef, useState } from 'react'
 
 import FullscreenIcon from '@mui/icons-material/Fullscreen'
 import Box from '@mui/material/Box'
@@ -32,7 +32,6 @@ const WorkshopQRPage = () => {
   const { toggles } = useFeatureToggle()
   const { user, loading, authenticated } = useAuth()
   const [selectedEventId, setSelectedEventId] = useState<number | null>(null)
-  const [countdown, setCountdown] = useState(30)
   const qrContainerRef = useRef<HTMLDivElement>(null)
 
   const isAdminOrMod = user?.status === 'admin' || user?.status === 'moderator'
@@ -41,16 +40,6 @@ const WorkshopQRPage = () => {
   const { mutate: updateEvent } = useAdminEventUpdate()
   const { data: tokenData } = useAdminQRToken(selectedEventId)
   const { data: redemptionsData } = useAdminEventRedemptions(selectedEventId)
-
-  // Sync countdown with token expiry on each token refresh
-  useEffect(() => {
-    if (!tokenData) return
-    setCountdown(tokenData.expires_in)
-    const interval = setInterval(() => {
-      setCountdown((prev) => (prev <= 1 ? 600 : prev - 1))
-    }, 1000)
-    return () => clearInterval(interval)
-  }, [tokenData])
 
   const handleToggleActive = (eventId: number, currentActive: boolean) => {
     updateEvent({ id: eventId, data: { qr_active: !currentActive } })
@@ -128,8 +117,8 @@ const WorkshopQRPage = () => {
                   </Box>
                   <Typography variant="body2" color="text.secondary">
                     {selectedEvent.attributes.qr_active
-                      ? 'Hackers can currently scan and claim points.'
-                      : 'Toggle on to allow scanning.'}
+                      ? 'Hackers can currently scan and claim points. Toggle off to stop claiming.'
+                      : 'Toggle on to allow scanning. Toggle off at any time to invalidate the QR code.'}
                   </Typography>
                 </Paper>
               )}
@@ -197,9 +186,6 @@ const WorkshopQRPage = () => {
                       color="success"
                       sx={{ fontSize: '1rem', px: 2 }}
                     />
-                    <Typography color="grey.600" variant="caption">
-                      Refreshes in {countdown}s
-                    </Typography>
                   </>
                 ) : (
                   <Typography color="black" textAlign="center" sx={{ py: 4 }}>

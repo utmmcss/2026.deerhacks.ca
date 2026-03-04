@@ -1,7 +1,7 @@
 import Head from 'next/head'
 import { useSearchParams } from 'next/navigation'
 import { useRouter } from 'next/router'
-import { Dispatch, SetStateAction, Suspense, useEffect, useState } from 'react'
+import { Dispatch, SetStateAction, Suspense, useCallback, useEffect, useState } from 'react'
 
 import Box from '@mui/material/Box'
 import Button from '@mui/material/Button'
@@ -30,6 +30,7 @@ import { useAPI } from '@/contexts/API'
 import { useAuth } from '@/contexts/Auth'
 import { useFeatureToggle } from '@/contexts/FeatureToggle'
 import { useUserList } from '@/hooks/User/useUserList'
+import { useUserListIds } from '@/hooks/User/useUserListIds'
 import { useUserUpdateBatch } from '@/hooks/User/useUserUpdateBatch'
 import { useAdminPointsAdjust } from '@/hooks/Workshop/useAdminPointsAdjust'
 import { useUserPoints } from '@/hooks/Workshop/useUserPoints'
@@ -225,6 +226,8 @@ const UsersTable = (props: Props) => {
   const [users, setUsers] = useState(data)
   const [rowCount, setRowCount] = useState(totalUsers)
   const [selectedRows, setSelectedRows] = useState<string[]>([])
+  const [allSelectedIds, setAllSelectedIds] = useState<string[] | null>(null)
+  const selectAll = useUserListIds()
   const [columnVisibilityModel, setColumnVisibilityModel] = useState<GridColumnVisibilityModel>({
     first_name: true,
     last_name: true,
@@ -289,8 +292,28 @@ const UsersTable = (props: Props) => {
       if (!confirm('You have unsaved changes. Are you sure you want to proceed?')) return
       setUpdateReq({ users: [] })
     }
+    if (
+      newParams.statuses !== undefined ||
+      newParams.internal_statuses !== undefined ||
+      newParams.search !== undefined
+    ) {
+      setAllSelectedIds(null)
+    }
     applyFilters(newParams)
   }
+
+  const handleSelectAll = useCallback(() => {
+    selectAll.mutate(
+      {
+        statuses: queryParams.statuses,
+        internal_statuses: queryParams.internal_statuses,
+        search: queryParams.search,
+      },
+      {
+        onSuccess: (data) => setAllSelectedIds(data.ids),
+      }
+    )
+  }, [selectAll.mutate, queryParams])
 
   return (
     <>
@@ -321,6 +344,12 @@ const UsersTable = (props: Props) => {
             isLoading,
             selectedUsers: users.filter((u) => selectedRows.includes(u.discord_id)),
             onClearSelection: () => setSelectedRows([]),
+            totalUsers: totalUsers,
+            onSelectAll: handleSelectAll,
+            isSelectingAll: selectAll.isLoading,
+            allSelectedIds: allSelectedIds,
+            allSelectedCount: allSelectedIds?.length ?? null,
+            onClearAllSelection: () => setAllSelectedIds(null),
           },
           footer: { fullWidth, setFullWidth } as FooterPropsOverrides,
         }}

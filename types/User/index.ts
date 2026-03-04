@@ -125,3 +125,14 @@ export type UserListData = UserFullData &
     application: Omit<Application, 'resume_file_name' | 'resume_link'>
     total_points: number
   }
+
+export type UserListIdsParams = {
+  statuses: UserStatus[]
+  internal_statuses: (UserStatus | 'empty')[]
+  search: string
+}
+
+export type UserListIdsResp = {
+  ids: string[]
+  total: number
+}
