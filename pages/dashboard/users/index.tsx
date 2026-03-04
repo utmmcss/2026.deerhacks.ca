@@ -346,7 +346,7 @@ const UsersTable = (props: Props) => {
             onClearSelection: () => setSelectedRows([]),
             totalUsers: totalUsers,
             onSelectAll: handleSelectAll,
-            isSelectingAll: selectAll.isPending,
+            isSelectingAll: selectAll.isLoading,
             allSelectedIds: allSelectedIds,
             allSelectedCount: allSelectedIds?.length ?? null,
             onClearAllSelection: () => setAllSelectedIds(null),

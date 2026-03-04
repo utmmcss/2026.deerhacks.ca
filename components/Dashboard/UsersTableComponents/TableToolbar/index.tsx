@@ -9,11 +9,13 @@ import SettingsIcon from '@mui/icons-material/Settings'
 import Box from '@mui/material/Box'
 import Button from '@mui/material/Button'
 import Chip from '@mui/material/Chip'
+import CircularProgress from '@mui/material/CircularProgress'
 import FormControlLabel from '@mui/material/FormControlLabel'
 import FormGroup from '@mui/material/FormGroup'
 import InputAdornment from '@mui/material/InputAdornment'
 import Switch from '@mui/material/Switch'
 import TextField from '@mui/material/TextField'
+import Typography from '@mui/material/Typography'
 import { GridToolbarContainer } from '@mui/x-data-grid'
 
 import EmailModal from '@/components/Dashboard/EmailModal'
@@ -31,6 +33,12 @@ type Props = {
   isLoading?: boolean
   selectedUsers?: UserListData[]
   onClearSelection?: () => void
+  totalUsers: number
+  onSelectAll: () => void
+  isSelectingAll: boolean
+  allSelectedIds: string[] | null
+  allSelectedCount: number | null
+  onClearAllSelection: () => void
 }
 
 const TableToolbar = (props: Props) => {
@@ -42,7 +50,15 @@ const TableToolbar = (props: Props) => {
     isLoading = false,
     selectedUsers = [],
     onClearSelection,
+    totalUsers,
+    onSelectAll,
+    isSelectingAll,
+    allSelectedIds,
+    allSelectedCount,
+    onClearAllSelection,
   } = props
+
+  const emailCount = allSelectedCount ?? selectedUsers.length
 
   const [openDataSettings, setOpenDataSettings] = useState(false)
   const [openEmailModal, setOpenEmailModal] = useState(false)
@@ -117,13 +133,37 @@ const TableToolbar = (props: Props) => {
             Data Settings
           </Button>
           <Button
-            disabled={isLoading || selectedUsers.length === 0}
+            disabled={isLoading || emailCount === 0}
             startIcon={<EmailIcon />}
             onClick={() => setOpenEmailModal(true)}
             sx={{ gap: 0, p: '0.75rem 1rem' }}
           >
-            Send Email {selectedUsers.length > 0 && `(${selectedUsers.length})`}
+            Send Email {emailCount > 0 && `(${emailCount})`}
           </Button>
+          {allSelectedIds === null && (
+            <Button
+              variant="outlined"
+              size="small"
+              onClick={onSelectAll}
+              disabled={totalUsers === 0 || isSelectingAll}
+              startIcon={isSelectingAll ? <CircularProgress size={14} color="inherit" /> : undefined}
+            >
+              {isSelectingAll ? 'Selecting…' : `Select All (${totalUsers})`}
+            </Button>
+          )}
+          {allSelectedIds !== null && (
+            <Box
+              component="div"
+              sx={{ display: 'flex', alignItems: 'center', gap: '1rem' }}
+            >
+              <Typography variant="body2" color="text.secondary">
+                All {allSelectedCount ?? 0} selected
+              </Typography>
+              <Button variant="text" size="small" onClick={onClearAllSelection}>
+                Clear
+              </Button>
+            </Box>
+          )}
         </Box>
         <Box
           component="div"
@@ -265,6 +305,7 @@ const TableToolbar = (props: Props) => {
           onClearSelection?.()
         }}
         selectedUsers={selectedUsers}
+        allSelectedIds={allSelectedIds ?? undefined}
       />
     </>
   )
