@@ -18,6 +18,7 @@ type Props = {
   open: boolean
   onClose: () => void
   selectedUsers: UserListData[]
+  allSelectedIds?: string[]
 }
 
 type SendState =
@@ -26,10 +27,13 @@ type SendState =
   | { status: 'sending' }
   | { status: 'complete'; success: number; failed: Array<{ email: string; error: string }> }
 
-const EmailModal = ({ open, onClose, selectedUsers }: Props) => {
+const EmailModal = ({ open, onClose, selectedUsers, allSelectedIds }: Props) => {
   const [subject, setSubject] = useState('')
   const [body, setBody] = useState('')
   const [sendState, setSendState] = useState<SendState>({ status: 'idle' })
+
+  const recipientIds = allSelectedIds ?? selectedUsers.map((u) => u.discord_id)
+  const recipientCount = recipientIds.length
 
   const { mutate: sendEmail, isLoading } = useEmailSend()
 
@@ -69,7 +73,7 @@ const EmailModal = ({ open, onClose, selectedUsers }: Props) => {
       setSendState({ status: 'sending' })
       sendEmail(
         {
-          userIds: selectedUsers.map((u) => u.discord_id),
+          userIds: recipientIds,
           subject,
           body,
         },
@@ -85,7 +89,7 @@ const EmailModal = ({ open, onClose, selectedUsers }: Props) => {
     }
   }
 
-  const canSend = subject.trim().length > 0 && body.trim().length > 0 && selectedUsers.length > 0
+  const canSend = subject.trim().length > 0 && body.trim().length > 0 && recipientCount > 0
 
   const getPrimaryButton = () => {
     switch (sendState.status) {
@@ -97,7 +101,7 @@ const EmailModal = ({ open, onClose, selectedUsers }: Props) => {
         }
       case 'confirm':
         return {
-          text: `Send to ${selectedUsers.length} users`,
+          text: `Send to ${recipientCount} users`,
           onClick: handleSend,
         }
       case 'sending':
@@ -164,7 +168,7 @@ const EmailModal = ({ open, onClose, selectedUsers }: Props) => {
         <>
           <Collapse in={sendState.status === 'confirm'}>
             <Alert severity="warning" sx={{ mb: 2 }}>
-              You are about to send this email to <strong>{selectedUsers.length}</strong> users.
+              You are about to send this email to <strong>{recipientCount}</strong> users.
               This action cannot be undone.
             </Alert>
           </Collapse>
@@ -180,7 +184,7 @@ const EmailModal = ({ open, onClose, selectedUsers }: Props) => {
           >
             <Box component="div" sx={{ display: 'flex', flexDirection: 'column', gap: 2 }}>
               <Typography variant="subtitle2" color="text.secondary">
-                Compose Email ({selectedUsers.length} recipients)
+                Compose Email ({recipientCount} recipients)
               </Typography>
 
               <TextField
