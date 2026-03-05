@@ -12,10 +12,13 @@ const EMAIL_TEMPLATE_WRAPPER = `
       <td align="center" style="padding: 40px 20px;">
         <table role="presentation" style="width: 100%; max-width: 600px; border-collapse: collapse;">
           <tr>
-            <td style="padding: 20px 30px; background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%); border-radius: 12px 12px 0 0;">
-              <h1 style="margin: 0; font-size: 28px; font-weight: 700; color: #ffffff;">
-                DeerHacks
-              </h1>
+            <td style="padding: 0; border-radius: 12px 12px 0 0; overflow: hidden;">
+              <a href="https://deerhacks-v-2026.devpost.com" target="_blank" style="text-decoration:none;">
+                <img src="https://i.imgur.com/o6UrNsQ.png"
+                     alt="DeerHacks V Banner"
+                     width="600"
+                     style="display:block; width:100%; max-width:600px; height:auto; border:0;">
+              </a>
             </td>
           </tr>
           <tr>
