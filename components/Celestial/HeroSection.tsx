@@ -1,20 +1,9 @@
-import NextLink from 'next/link'
-
-import { useFeatureToggle } from '@/contexts/FeatureToggle'
 import { MapPin, Sparkles, Users } from 'lucide-react'
 
 import { getButtonClassName } from './buttonStyles'
 import DeerConstellation from './DeerConstellation'
 
 const HeroSection = () => {
-  const { toggles } = useFeatureToggle()
-  const applyLabel = 'Apply Now'
-  const applyEnabled = toggles.dashboard
-  const applyClassName = getButtonClassName(
-    'hero',
-    'xl',
-    applyEnabled ? '' : 'pointer-events-none opacity-50'
-  )
   const secondaryClassName = getButtonClassName('constellation', 'xl')
 
   return (
@@ -24,17 +13,19 @@ const HeroSection = () => {
 
       {/* Nebula effects - Three-layer background atmosphere */}
       <div className="absolute inset-0 z-0 overflow-hidden pointer-events-none">
-        <div 
-          className="absolute top-[-10%] left-[-5%] w-[1000px] h-[1000px] rounded-full opacity-[0.25]" 
-          style={{ background: 'radial-gradient(circle, hsl(var(--nebula-purple)) 0%, transparent 70%)' }} 
+        <div
+          className="absolute top-[-10%] left-[-5%] w-[1000px] h-[1000px] rounded-full opacity-[0.25]"
+          style={{
+            background: 'radial-gradient(circle, hsl(var(--nebula-purple)) 0%, transparent 70%)',
+          }}
         />
-        <div 
-          className="absolute top-[0%] right-[-10%] w-[1100px] h-[1100px] rounded-full opacity-[0.22]" 
-          style={{ background: 'radial-gradient(circle, hsl(var(--primary)) 0%, transparent 70%)' }} 
+        <div
+          className="absolute top-[0%] right-[-10%] w-[1100px] h-[1100px] rounded-full opacity-[0.22]"
+          style={{ background: 'radial-gradient(circle, hsl(var(--primary)) 0%, transparent 70%)' }}
         />
-        <div 
-          className="absolute bottom-[-10%] left-[20%] w-[900px] h-[900px] rounded-full opacity-[0.15]" 
-          style={{ background: 'radial-gradient(circle, hsl(var(--accent)) 0%, transparent 70%)' }} 
+        <div
+          className="absolute bottom-[-10%] left-[20%] w-[900px] h-[900px] rounded-full opacity-[0.15]"
+          style={{ background: 'radial-gradient(circle, hsl(var(--accent)) 0%, transparent 70%)' }}
         />
       </div>
 
@@ -77,8 +68,8 @@ const HeroSection = () => {
             className="text-base sm:text-lg md:text-xl text-muted-foreground mb-8 max-w-2xl opacity-0 animate-fade-in-up leading-relaxed"
             style={{ animationDelay: '0.6s' }}
           >
-            Join 500+ innovators for 36 hours of building, learning, and creating.
-            Explore the universe of possibilities.
+            Join 500+ innovators for 36 hours of building, learning, and creating. Explore the
+            universe of possibilities.
           </p>
 
           {/* Event details */}
@@ -101,15 +92,6 @@ const HeroSection = () => {
             className="flex flex-col sm:flex-row gap-4 opacity-0 animate-fade-in-up"
             style={{ animationDelay: '0.9s' }}
           >
-            {applyEnabled ? (
-              <NextLink href="/login" className={`${applyClassName} no-underline`}>
-                {applyLabel}
-              </NextLink>
-            ) : (
-              <span className={applyClassName} aria-disabled="true">
-                {applyLabel}
-              </span>
-            )}
             <a href="#about" className={`${secondaryClassName} no-underline`}>
               Learn More
             </a>

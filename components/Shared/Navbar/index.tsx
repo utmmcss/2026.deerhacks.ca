@@ -3,27 +3,23 @@ import NextLink from 'next/link'
 import { useRouter } from 'next/router'
 import { useState } from 'react'
 
+import MenuIcon from '@mui/icons-material/Menu'
 import AppBar from '@mui/material/AppBar'
 import Box from '@mui/material/Box'
 import Button from '@mui/material/Button'
 import IconButton from '@mui/material/IconButton'
 import Menu from '@mui/material/Menu'
 import MenuItem from '@mui/material/MenuItem'
-import MenuIcon from '@mui/icons-material/Menu'
-
-import { useFeatureToggle } from '@/contexts/FeatureToggle'
 
 const navLinks = [
   { label: 'About', href: '/#about' },
   { label: 'Sponsors', href: '/#sponsors' },
   { label: 'FAQ', href: '/#faq' },
-  { label: 'Schedule', href: '/schedule' },
   { label: 'Code of Conduct', href: '/code' },
   { label: 'Privacy Policy', href: '/privacy' },
 ]
 
 const Navbar = () => {
-  const { toggles } = useFeatureToggle()
   const router = useRouter()
   const isCompact = router.pathname === '/' || router.pathname.startsWith('/dashboard')
   const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null)
@@ -93,21 +89,16 @@ const Navbar = () => {
             gap={1}
           >
             {navLinks.map((link) => (
-              <Button key={link.label} href={link.href} component={NextLink} color="inherit" size="small">
+              <Button
+                key={link.label}
+                href={link.href}
+                component={NextLink}
+                color="inherit"
+                size="small"
+              >
                 {link.label}
               </Button>
             ))}
-            <Button
-              href="/login"
-              component={NextLink}
-              variant="outlined"
-              color="inherit"
-              size="small"
-              disabled={!toggles.dashboard}
-              sx={{ ml: 1 }}
-            >
-              Apply Now
-            </Button>
           </Box>
 
           {/* Hamburger — visible below md */}
@@ -148,15 +139,6 @@ const Navbar = () => {
                   {link.label}
                 </MenuItem>
               ))}
-              <MenuItem
-                component={NextLink}
-                href="/login"
-                onClick={handleCloseMenu}
-                disabled={!toggles.dashboard}
-                sx={{ color: 'inherit', fontSize: '0.875rem', fontWeight: 600 }}
-              >
-                Apply Now
-              </MenuItem>
             </Menu>
           </Box>
         </Box>

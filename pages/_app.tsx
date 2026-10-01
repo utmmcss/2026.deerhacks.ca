@@ -22,7 +22,7 @@ import '../types/extensions'
  * https://nextjs.org/docs/pages/building-your-application/routing/custom-app
  */
 // Pages that use the Celestial theme and have their own footer
-const celestialPages = ['/', '/schedule', '/gallery', '/code', '/privacy']
+const celestialPages = ['/', '/gallery', '/code', '/privacy']
 
 export default function MyApp({ Component, pageProps }: AppProps) {
   const router = useRouter()
